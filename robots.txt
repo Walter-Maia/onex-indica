@@ -1,0 +1,7 @@
+# Indique a OneX: programa de indicação da OneX Data Centers
+# Atenção: robots.txt só vale na raiz do domínio. Se a página for publicada em https://onexdc.com.br/indique/,
+# copie as linhas abaixo para o robots.txt da raiz de onexdc.com.br (ver README).
+User-agent: *
+Allow: /
+
+Sitemap: https://onexdc.com.br/indique/sitemap.xml

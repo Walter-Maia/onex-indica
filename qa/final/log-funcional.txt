@@ -1,0 +1,49 @@
+OK    um único H1
+OK    títulos sem salto de nível (12333323333333332233332322)
+OK    toda <img> com alt, width e height
+OK    botões-ícone com nome acessível
+OK    campos do formulário com autocomplete
+OK    todo campo com <label>
+OK    ids únicos []
+OK    simulador abre em VoIP Profissional: R$ 199,00
+OK    VoIP Essencial → R$ 99,00 | 1ª parcela do VoIP Essencial: R$ 99,00 por mês × 100%
+OK    Hospedagem → R$ 29,90 (sem grupo de planos) | 1ª parcela do Plano Básico de Hospedagem: R$ 29,90 por mês × 100%
+OK    Colocation (sob consulta) → 100% da 1ª parcela | do plano que a empresa fechar. Preço sob consulta: a OneX monta a proposta para a empresa indicada. | anúncio: Sua comissão: 100% da 1ª parcela do plano fechado. Preço sob consulta.
+OK    VoIP Enterprise → 100% da 1ª parcela
+OK    cliques rápidos deixam um só valor na placa
+OK    envio vazio: 8 erros inline, foco em f-nome | Confira os campos destacados para enviar a indicação.
+OK    máscaras (31) 98765-4321 / (31) 3333-4444, erros restantes: 0
+OK    botão muda para "Abrindo WhatsApp…"
+OK    abriu nova aba do WhatsApp
+      URL aberta: https://api.whatsapp.com/send/?phone=553140404888&text=Ol%C3%A1%2C+OneX%21+Quero…
+OK    mensagem com os dados (texto decodificado ok)
+        | Olá, OneX! Quero fazer uma indicação pelo programa Indique a OneX.
+        | 
+        | *Quem indica*
+        | Nome: Maria Souza
+        | WhatsApp: (31) 98765-4321
+        | E-mail: maria@exemplo.com.br
+        | 
+        | *Empresa indicada*
+        | Empresa: Transportes Vale Ltda.
+        | Quem decide: João Lima, (31) 3333-4444
+        | Produto de interesse: Colocation
+        | Observação: Querem migrar 3 servidores & backup até dezembro.
+        | 
+        | Autorizo a OneX a usar estes dados para tratar desta indicação; a pessoa indicada concorda em receber o contato.
+OK    painel de sucesso visível no lugar do formulário
+      foco no painel de sucesso: true (pode falhar no headless se a aba nova tomar o foco da janela)
+OK    "Indicar outra empresa" mantém quem indica e limpa a empresa
+OK    FAQ abre no clique
+OK    primeiro Tab cai em "Pular para o conteúdo"
+OK    menu abre (aria-expanded=true, rótulo "Fechar menu")
+OK    Escape fecha o menu e devolve o foco ao botão
+OK    sem erros de console/rede 
+1440 carregou: {"src":"conexao-x.mp4","pausado":false,"tocando":true,"tempo":2.69,"botao":true,"rotulo":"Pausar a animação de fundo"}
+1440 hero fora da tela: {"src":"conexao-x.mp4","pausado":true,"tocando":true,"tempo":2.93,"botao":true,"rotulo":"Pausar a animação de fundo"}
+1440 de volta: {"src":"conexao-x.mp4","pausado":false,"tocando":true,"tempo":4.45,"botao":true,"rotulo":"Pausar a animação de fundo"}
+1440 depois do botão: {"src":"conexao-x.mp4","pausado":true,"tocando":true,"tempo":4.45,"botao":true,"rotulo":"Retomar a animação de fundo"}
+390 carregou: {"src":"conexao-x-720.mp4","pausado":false,"tocando":true,"tempo":2.49,"botao":true,"rotulo":"Pausar a animação de fundo"}
+390 hero fora da tela: {"src":"conexao-x-720.mp4","pausado":true,"tocando":true,"tempo":2.73,"botao":true,"rotulo":"Pausar a animação de fundo"}
+390 de volta: {"src":"conexao-x-720.mp4","pausado":false,"tocando":true,"tempo":4.28,"botao":true,"rotulo":"Pausar a animação de fundo"}
+390 depois do botão: {"src":"conexao-x-720.mp4","pausado":true,"tocando":true,"tempo":4.28,"botao":true,"rotulo":"Retomar a animação de fundo"}

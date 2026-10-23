@@ -1,0 +1,52 @@
+# Indique a OneX
+
+> Programa de indicação da OneX Data Centers (Minas Gerais, Brasil). Quem indica uma empresa recebe 100% do valor da primeira parcela do produto que a empresa indicada contratar. A comissão vale quando a empresa indicada fecha contrato.
+
+Página: https://onexdc.com.br/indique/ (endereço provisório)
+Empresa: OneX Data Centers, https://onexdc.com.br/
+Contato: WhatsApp e telefone (31) 4040-4888, contato@onexdatacenter.com.br
+
+## Regra do programa
+
+- Comissão: 100% da 1ª parcela do produto contratado pela empresa indicada.
+- Condição: a empresa indicada precisa fechar contrato com a OneX.
+- Prazo e forma de pagamento: informados pela equipe da OneX quando ela confirma a indicação. A página não publica esses detalhes.
+- Condições de participação e limite de indicações: confirmados pela equipe da OneX. A página não publica esses detalhes.
+- Quem indica não precisa vender: a equipe da OneX conversa com a empresa indicada e apresenta a proposta.
+
+## Como indicar
+
+1. Você indica: preenche o formulário da página com os seus dados, o nome da empresa e o contato de quem decide.
+2. A OneX conversa com a empresa indicada.
+3. A empresa contrata.
+4. Você recebe 100% da 1ª parcela.
+
+O formulário não guarda dados em servidor: ele monta uma mensagem e abre o WhatsApp da OneX (https://wa.me/553140404888) para a pessoa conferir e enviar.
+
+## Produtos que podem ser indicados
+
+Valores de referência publicados em onexdc.com.br; a comissão é calculada sobre a 1ª parcela do plano efetivamente contratado.
+
+- Colocation: sob consulta.
+- Servidores dedicados e área dedicada: sob consulta.
+- VPS Linux (4 GB de RAM, 2 vCPU, 120 GB, contrato de 12 meses): sob consulta.
+- Hospedagem de sites, Plano Básico (2 vCPU, 4 GB de RAM, 20 GB SSD): R$ 29,90 por mês. Comissão de referência: R$ 29,90.
+- Virtualização: sob consulta.
+- Soluções em nuvem, OnexCloud (1 TB compartilhado, backup incluso): sob consulta.
+- E-mail profissional com domínio: sob consulta.
+- Telefonia VoIP: Essencial R$ 99 por mês, Profissional R$ 199 por mês, Enterprise sob consulta. Comissões de referência: R$ 99 e R$ 199.
+- Backup em nuvem: sob consulta.
+
+## Sobre a OneX
+
+- Data centers próprios em Ipatinga/MG e Belo Horizonte/MG, que podem ser visitados.
+- Atendimento com engenheiro na primeira ligação, 24/7.
+- Um fornecedor para colocation, servidores, nuvem, e-mail, VoIP e backup.
+- Dados hospedados no Brasil, em Minas Gerais.
+
+## Links
+
+- Site da OneX: https://onexdc.com.br/
+- Instagram: https://www.instagram.com/onexdc/
+- Facebook: https://www.facebook.com/onexdcenter/
+- LinkedIn: https://www.linkedin.com/company/onex-dc/
