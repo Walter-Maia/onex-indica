@@ -30,14 +30,14 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 
 ## Identidade aplicada
 
-Laranja `#F9681C` (botões, traços, destaques grandes), navy `#000B41` (texto e caixas escuras), ardósia `#464F7A` (texto corrido), papel `#F3F4F8`, branco `#FFFFFE`, vermelho `#DD4444` só na borda de campo com erro. Montserrat 300–800. Logo e X sempre oficiais (imagens de `assets/img/`); o cabeçalho recorta o logo oficial em duas partes por `clip-path` só para animar a entrada. As três peças do X usadas nas animações são os polígonos medidos no alfa do PNG oficial; onde o X aparece inteiro, a arte oficial entra por cima no fim.
+Preto, branco e laranja (paleta da página OnexCloud, sem azul): laranja `#F9681C` (botões, traços, destaques grandes), preto `#111010` (texto e caixas escuras, token `--preto`), cinza quente `#55504A` (texto corrido, `--cinza`), papel `#F6F4F1`, branco `#FFFFFE`; vídeo e pôsteres das fitas de luz reprocessados para tirar o azul do fundo; vermelho `#DD4444` só na borda de campo com erro. Montserrat 300–800. Logo e X sempre oficiais (imagens de `assets/img/`); o cabeçalho recorta o logo oficial em duas partes por `clip-path` só para animar a entrada. As três peças do X usadas nas animações são os polígonos medidos no alfa do PNG oficial; onde o X aparece inteiro, a arte oficial entra por cima no fim.
 
 | Contraste | Razão |
 |---|---|
-| navy sobre o botão laranja | 6,2:1 |
-| laranja sobre navy (destaques, índices, "100%") | 6,2:1 |
-| navy sobre a caixa laranja | 6,2:1 |
-| ardósia sobre branco / papel | 7,9:1 / 7,2:1 |
+| preto sobre o botão laranja | 6,3:1 |
+| laranja sobre preto (destaques, índices, "100%") | 6,3:1 |
+| preto sobre a caixa laranja | 6,3:1 |
+| cinza quente sobre branco / papel | 8,0:1 / 7,2:1 |
 | laranja de texto `#B5460C` sobre branco / papel | 5,5:1 / 5,0:1 |
 | placeholder `#6B7290` sobre branco | 4,7:1 |
 
@@ -91,7 +91,7 @@ Tudo anima só `transform`, `opacity`, `stroke-dashoffset` e `clip-path` (cores 
 
 1. **Intro própria e diferente da do site principal**, derivada da ideia de conexão e da geometria real do X (trilhas pelos eixos medidos, cruzamento no ponto de cruzamento do X).
 2. **Hero conta a indicação com a geometria do X** (as pernas apontam para você e para a empresa) e **toca uma vez** (não é loop). O loop contínuo fica só no vídeo de fundo, que tem botão de pausa.
-3. **Botões laranja com texto navy** (6,2:1). Texto branco em `#F9681C` dá 3,0:1 e não passa AA.
+3. **Botões laranja com texto preto** (6,3:1). Texto branco em `#F9681C` dá 3,0:1 e não passa AA.
 4. **"100% da primeira parcela" em laranja no H1**: é a oferta, não decoração; a condição ("quando a empresa indicada contrata") fica logo abaixo, no hero, no passo 3, no simulador e na primeira resposta do FAQ.
 5. **Formulário sem backend e honesto**: valida inline, monta a mensagem e abre `https://wa.me/553140404888?text=…` (dentro do gesto de envio; se o navegador recusar a aba nova, abre na mesma aba). A interface diz que nada é guardado e que a indicação só chega quando a pessoa toca em enviar no WhatsApp. "Indicar outra empresa" mantém os dados de quem indica.
 6. **Simulador** abre em Telefonia VoIP Profissional (R$ 199,00). Produtos "sob consulta" mostram "100% da 1ª parcela do plano que a empresa fechar". A nota "valores de referência…" fica ao lado do simulador e na seção de produtos.

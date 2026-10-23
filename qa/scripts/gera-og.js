@@ -33,7 +33,7 @@ const baixa = (url, destino) => new Promise((ok, falha) => {
     '[1:v]scale=-2:630,format=rgba,colorchannelmixer=aa=0.85[luz]',
     '[0:v][luz]overlay=x=330:y=0[f1]',
     // véu navy da esquerda para a direita: o texto fica sobre fundo calmo
-    "color=c=0x000B41:s=1200x630,format=rgba,geq=r='0':g='11':b='65':a='255*clip(1.75-1.9*X/W\\,0.1\\,1)'[veu]",
+    "color=c=0x111010:s=1200x630,format=rgba,geq=r='17':g='16':b='16':a='255*clip(1.75-1.9*X/W\\,0.1\\,1)'[veu]",
     '[f1][veu]overlay=0:0[f2]',
     // X oficial sobre o cruzamento da luz e logo oficial branco
     '[2:v]scale=290:-1[x]', '[f2][x]overlay=x=752:y=185[f3]',
@@ -48,7 +48,7 @@ const baixa = (url, destino) => new Promise((ok, falha) => {
   ].join(';');
   const saida = path.join(IMG, 'og-indique.jpg');
   execFileSync('ffmpeg', ['-v', 'error', '-y',
-    '-f', 'lavfi', '-i', 'color=c=0x000B41:s=1200x630',
+    '-f', 'lavfi', '-i', 'color=c=0x111010:s=1200x630',
     '-i', path.join(IMG, 'conexao-x-poster.webp'),
     '-i', path.join(IMG, 'onex-x.webp'),
     '-i', path.join(IMG, 'logo-onex-branco.webp'),
