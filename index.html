@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://onexdc.com.br/indique/assets/img/og-indique.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Indique a OneX: 100% da 1ª parcela para quem indica. Logo da OneX Data Center sobre fitas de luz laranja cruzadas em X.">
+<meta property="og:image:alt" content="Indique a OneX: 100% da 1ª parcela para quem indica. Logo da OneX Data Center e o X da marca desenhado em pontos laranja sobre fundo preto.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Indique a OneX e receba 100% da primeira parcela">
 <meta name="twitter:description" content="Indique uma empresa para a OneX Data Centers. Quando ela contrata, você recebe 100% da 1ª parcela do produto contratado.">
@@ -34,9 +34,10 @@
 <link rel="stylesheet" href="assets/css/indique.css">
 <!-- Intro: decidida antes da primeira pintura. Não roda com #âncora, aba oculta, página já rolada, movimento reduzido
      ou se já foi vista nesta sessão. ?intro=1 força (revisão), ?intro=0 pula e ?fx=0 entrega a composição estática. -->
-<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}if(/[?&]intro=0\b/.test(q)||matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!rm&&"IntersectionObserver"in window&&!!document.createElement("canvas").getContext)d.classList.add("visita-on");if(/[?&]intro=0\b/.test(q)||rm)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
 <script src="assets/js/intro.js" defer onerror="document.documentElement.classList.remove('intro-ativa')"></script>
 <script src="assets/js/indique.js" defer></script>
+<script src="assets/js/visita.js" defer onerror="document.documentElement.classList.remove('visita-on')"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -163,109 +164,105 @@
 <main id="conteudo" tabindex="-1">
   <span id="topo" class="ancora-topo"></span>
 
-  <!-- ===================== HERO ===================== -->
-  <section class="caixa caixa--navy hero" aria-labelledby="titulo" data-escuro data-hero>
-    <!-- fundo: pôster parado (sempre) e vídeo das fitas de luz (só com movimento liberado, na tela e com a aba visível) -->
-    <div class="hero__fundo" aria-hidden="true">
-      <img class="hero__poster" src="assets/img/conexao-x-poster.webp" alt="" width="1280" height="716" decoding="async">
-      <video class="hero__video" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1"
-        data-video data-src="assets/video/conexao-x.mp4" data-src-pequeno="assets/video/conexao-x-720.mp4"></video>
-    </div>
-    <div class="hero__grade">
-      <div class="hero__texto">
-        <p class="hero__olho"><svg class="mini-x" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false"><use href="#x-pecas"/></svg>Programa de indicação OneX Data Centers</p>
-        <h1 id="titulo"><span class="h1__a">Indique a OneX e receba</span> <span class="h1__b">100% da primeira parcela</span></h1>
-        <p class="hero__sub">Conhece uma empresa que precisa de colocation, nuvem, servidores, VoIP ou backup? Apresente a OneX. Quando ela contrata, o valor da 1ª parcela do produto que ela fechou é seu.</p>
-        <p class="hero__condicao"><strong>Comissão de 100% sobre a 1ª parcela</strong> do produto indicado, quando a empresa indicada contrata.</p>
-        <div class="hero__acoes">
-          <a class="botao" href="#indicar" data-cta-hero>Quero indicar</a>
-          <a class="botao botao--contorno" href="#simulador">Simular minha comissão</a>
+  <!-- ===================== HERO: VISITA À ONEX ===================== -->
+  <!-- A rolagem leva a pessoa para dentro da OneX: fachada → corredor → rack → rede → storage → telefonia → o X. Cada
+       parada mostra produtos que dá para indicar. As cenas são fotos ilustrativas geradas no Higgsfield, desenhadas em
+       pontos por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em Canvas2D).
+       Sem JS, com movimento reduzido ou ?fx=0: a fachada em pontos (imagem) fica atrás do texto e as paradas viram
+       cartões, cada um com a sua cena em pontos. -->
+  <section class="visita" id="visita" aria-labelledby="titulo" data-visita data-escuro>
+    <div class="visita__palco" data-visita-palco>
+      <div class="visita__moldura" aria-hidden="true" data-hero></div>
+      <div class="visita__arte" aria-hidden="true" data-visita-arte>
+        <picture>
+          <source media="(max-aspect-ratio: 9/10)" srcset="assets/img/visita/pontos-0-retrato.webp" width="780" height="1688">
+          <img class="visita__poster" src="assets/img/visita/pontos-0.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+        </picture>
+        <canvas class="visita__tela" data-visita-tela></canvas>
+        <canvas class="visita__brilho" data-visita-brilho></canvas>
+      </div>
+
+      <div class="visita__coluna">
+        <div class="visita__abertura" data-parada="0">
+          <p class="hero__olho"><svg class="mini-x" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false"><use href="#x-pecas"/></svg>Programa de indicação OneX Data Centers</p>
+          <h1 id="titulo"><span class="h1__a">Indique a OneX e receba</span> <span class="h1__b">100% da primeira parcela</span></h1>
+          <p class="hero__sub">Conhece uma empresa que precisa de colocation, nuvem, servidores, VoIP ou backup? Apresente a OneX. Quando ela contrata, o valor da 1ª parcela do produto que ela fechou é seu.</p>
+          <p class="hero__condicao"><strong>Comissão de 100% sobre a 1ª parcela</strong> do produto indicado, quando a empresa indicada contrata.</p>
+          <div class="hero__acoes">
+            <a class="botao" href="#indicar" data-cta-hero>Quero indicar</a>
+            <a class="botao botao--contorno" href="#simulador">Simular minha comissão</a>
+          </div>
+          <p class="visita__dica" aria-hidden="true"><span></span>Role para entrar na OneX</p>
+        </div>
+
+        <h2 class="so-leitor">Uma visita à OneX: o que você pode indicar</h2>
+        <ol class="visita__paradas">
+          <li class="parada" data-parada="1">
+            <img class="parada__cena" src="assets/img/visita/pontos-1.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
+            <p class="indice" aria-hidden="true"><span>01</span>O corredor</p>
+            <h3 class="parada__titulo">Colocation e área dedicada</h3>
+            <ul class="parada__itens">
+              <li><strong>Colocation</strong> Os servidores da empresa hospedados no data center da OneX, em Minas Gerais.</li>
+              <li><strong>Área dedicada</strong> Um espaço só da empresa dentro do data center.</li>
+            </ul>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
+          </li>
+          <li class="parada" data-parada="2">
+            <img class="parada__cena" src="assets/img/visita/pontos-2.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
+            <p class="indice" aria-hidden="true"><span>02</span>O rack</p>
+            <h3 class="parada__titulo">Servidores, VPS e virtualização</h3>
+            <ul class="parada__itens">
+              <li><strong>Servidores dedicados</strong> Máquinas exclusivas para quem precisa de desempenho e controle.</li>
+              <li><strong>VPS Linux</strong> 4 GB de RAM, 2 vCPU e 120 GB, em contrato de 12 meses.</li>
+              <li><strong>Virtualização</strong> Vários ambientes virtuais na mesma infraestrutura, cada um isolado.</li>
+            </ul>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
+          </li>
+          <li class="parada" data-parada="3">
+            <img class="parada__cena" src="assets/img/visita/pontos-3.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
+            <p class="indice" aria-hidden="true"><span>03</span>A rede</p>
+            <h3 class="parada__titulo">Nuvem, sites e e-mail</h3>
+            <ul class="parada__itens">
+              <li><strong>OnexCloud</strong> Armazenamento de 1 TB compartilhado, com backup incluso.</li>
+              <li><strong>Hospedagem de sites</strong> Plano Básico com 2 vCPU, 4 GB de RAM e 20 GB SSD por R$&nbsp;29,90 por mês.</li>
+              <li><strong>E-mail profissional</strong> Com o domínio da empresa, para a equipe inteira.</li>
+            </ul>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(R$&nbsp;29,90 no Plano Básico de hospedagem)</span></p>
+          </li>
+          <li class="parada" data-parada="4">
+            <img class="parada__cena" src="assets/img/visita/pontos-4.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
+            <p class="indice" aria-hidden="true"><span>04</span>O storage</p>
+            <h3 class="parada__titulo">Backup em nuvem</h3>
+            <ul class="parada__itens">
+              <li><strong>Backup em nuvem</strong> Cópias de segurança dos dados da empresa, guardadas na nuvem da OneX.</li>
+            </ul>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
+          </li>
+          <li class="parada" data-parada="5">
+            <img class="parada__cena" src="assets/img/visita/pontos-5.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
+            <p class="indice" aria-hidden="true"><span>05</span>A telefonia</p>
+            <h3 class="parada__titulo">Telefonia VoIP</h3>
+            <ul class="parada__itens">
+              <li><strong>Essencial</strong> R$&nbsp;99 por mês.</li>
+              <li><strong>Profissional</strong> R$&nbsp;199 por mês.</li>
+              <li><strong>Enterprise</strong> Sob consulta.</li>
+            </ul>
+            <p class="parada__ganho">Você recebe <strong>R$&nbsp;99 ou R$&nbsp;199</strong> <span>(Enterprise sob consulta)</span></p>
+          </li>
+        </ol>
+
+        <div class="visita__fim" data-parada="6">
+          <p class="visita__fim-titulo">Tudo isso você pode indicar. Quando a empresa contrata, <span>a 1ª parcela é sua.</span></p>
+          <div class="hero__acoes">
+            <a class="botao" href="#indicar">Quero indicar</a>
+            <a class="botao botao--contorno" href="#como-funciona">Ver como funciona</a>
+          </div>
         </div>
       </div>
 
-      <!-- A indicação contada sem depender de texto (uma vez, quando o hero aparece; de novo a cada volta à tela).
-           As pernas do X da OneX apontam para as duas pontas da história: você (esquerda) e a empresa indicada (direita).
-           1) você → empresa: o traço laranja corre por baixo; 2) a empresa acende e assina o contrato (selo);
-           3) empresa → X: o traço sobe pela perna direita e as três peças do X travam no lugar (a arte oficial entra
-           por cima); 4) X → você: o traço desce pela perna esquerda e o valor volta: "100% da 1ª parcela".
-           Sem JavaScript, com movimento reduzido ou com ?fx=0 fica o quadro final, com a história inteira e o sentido
-           marcado pelas setas. Palco: viewBox -250 -250 500 460; roteiro de tempos em assets/css/indique.css. -->
-      <div class="cena" aria-hidden="true" data-cena>
-        <svg class="cena__svg" viewBox="-250 -250 500 460" focusable="false">
-          <defs>
-            <radialGradient id="cn-brilho-grad"><stop offset="0" stop-color="#F9681C" stop-opacity=".5"/><stop offset="1" stop-color="#F9681C" stop-opacity="0"/></radialGradient>
-          </defs>
-          <!-- trilhos fantasmas: o caminho inteiro, apagado -->
-          <g class="cn-trilhos">
-            <path d="M-133 60H133"/>
-            <path d="M147.2 29.45L63.6 -69.6"/>
-            <path d="M-63.6 -69.6L-147.2 29.45"/>
-          </g>
-          <!-- o traço laranja, um trecho por gesto -->
-          <path class="cn-linha cn-linha--1" pathLength="1" d="M-133 60H133"/>
-          <path class="cn-linha cn-linha--2" pathLength="1" d="M147.2 29.45L63.6 -69.6"/>
-          <path class="cn-linha cn-linha--3" pathLength="1" d="M-63.6 -69.6L-147.2 29.45"/>
-          <!-- sentido de cada trecho (aparece quando o trecho termina; na composição estática, sempre) -->
-          <g class="cn-setas">
-            <path class="cn-seta cn-seta--1" d="M-5 -6.5L3 0-5 6.5" transform="translate(0 60)"/>
-            <path class="cn-seta cn-seta--2" d="M-5 -6.5L3 0-5 6.5" transform="translate(105.4 -20.08) rotate(-130.2)"/>
-            <path class="cn-seta cn-seta--3" d="M-5 -6.5L3 0-5 6.5" transform="translate(-105.4 -20.08) rotate(130.2)"/>
-          </g>
-
-          <!-- o X da OneX: centrado no chevron; peças medidas + arte oficial por cima -->
-          <g transform="translate(-81.38 -236) scale(.35)">
-            <g class="cn-x-fantasma">
-              <path d="M1.5 69 L134.5 69 L284.5 243 L151.5 243 Z"/>
-              <path d="M414 0 L542 0 L331 244 L265 168 Z"/>
-              <path d="M156.6 273 L309.5 273 L465 458 L335 458 L233 339 L132 458 L0 458 Z"/>
-            </g>
-            <path class="cn-peca cn-peca--a" d="M1.5 69 L134.5 69 L284.5 243 L151.5 243 Z"/>
-            <path class="cn-peca cn-peca--b" d="M414 0 L542 0 L331 244 L265 168 Z"/>
-            <path class="cn-peca cn-peca--c" d="M156.6 273 L309.5 273 L465 458 L335 458 L233 339 L132 458 L0 458 Z"/>
-            <image class="cn-x-oficial" href="assets/img/onex-x.webp" x="0" y="0" width="541" height="458"/>
-          </g>
-
-          <!-- você -->
-          <g transform="translate(-173 60)">
-            <circle class="cn-brilho" r="78" fill="url(#cn-brilho-grad)"/>
-            <g class="cn-no cn-no--voce">
-              <circle class="cn-no__base" r="34"/>
-              <circle class="cn-no__aro" r="40"/>
-              <g class="cn-no__icone"><circle cx="0" cy="-8.5" r="8"/><path d="M-15 17c0-9.4 6.7-14.5 15-14.5S15 7.6 15 17"/></g>
-            </g>
-          </g>
-          <!-- a empresa indicada -->
-          <g transform="translate(173 60)">
-            <circle class="cn-pulso" r="40"/>
-            <g class="cn-no cn-no--empresa">
-              <circle class="cn-no__base" r="34"/>
-              <circle class="cn-no__aro" r="40"/>
-              <g class="cn-no__icone"><path d="M-13 17V-12.5a1.5 1.5 0 0 1 1.5-1.5h12a1.5 1.5 0 0 1 1.5 1.5V17M2 -2h9.5A1.5 1.5 0 0 1 13 -.5V17M-18 17h35"/><path class="cn-janelas" d="M-8 -7.5h1M-3 -7.5h1M-8 -1h1M-3 -1h1M-8 5.5h1M-3 5.5h1M6.5 4h1M6.5 10h1"/></g>
-            </g>
-          </g>
-          <!-- o contrato da empresa: folha, assinatura e selo -->
-          <g transform="translate(200 -12)">
-            <g class="cn-doc">
-              <rect class="cn-doc__folha" x="-20" y="-26" width="40" height="52" rx="5"/>
-              <path class="cn-doc__texto" d="M-11 -14h22M-11 -6h22M-11 2h13"/>
-              <path class="cn-doc__assinatura" pathLength="1" d="M-11 16c2.5-5 4.5-5.5 5.5-2s2.5 3.5 4.5 0 3.5-3.5 4.5-.5 3 2 7-1"/>
-              <g transform="translate(20 -26)"><g class="cn-doc__selo"><circle r="10.5"/><path d="M-4.6 .3l3 3 6.2-6.2"/></g></g>
-            </g>
-          </g>
-
-          <!-- a ponta do traço (uma por trecho): o transform de fora anda, o de dentro acende e apaga -->
-          <g class="cn-caneta cn-caneta--1"><g class="cn-caneta__luz"><circle class="cn-caneta__halo" r="11"/><circle r="4.5"/></g></g>
-          <g class="cn-caneta cn-caneta--2"><g class="cn-caneta__luz"><circle class="cn-caneta__halo" r="11"/><circle r="4.5"/></g></g>
-          <g class="cn-caneta cn-caneta--3"><g class="cn-caneta__luz"><circle class="cn-caneta__halo" r="11"/><circle r="4.5"/></g></g>
-        </svg>
-        <!-- só dois textos na arte: quem é você e o que volta para você -->
-        <span class="cn-rotulo" style="--x:-173;--y:96">Você</span>
-        <span class="cn-valor" style="--x:-173;--y:122"><strong>100%</strong><span>da 1ª parcela</span></span>
-      </div>
+      <div class="visita__progresso" aria-hidden="true"><span data-visita-progresso></span></div>
+      <a class="visita__pular" href="#como-funciona">Pular a visita<svg class="icone-inline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-seta"/></svg></a>
     </div>
-    <button class="hero__pausa" type="button" aria-pressed="false" aria-label="Pausar a animação de fundo" hidden data-video-pausa>
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pausa__icone" d="M9 6.5v11M15 6.5v11"/><path class="tocar__icone" d="M8.5 6.2v11.6L18 12z"/></svg>
-    </button>
   </section>
 
   <!-- ===================== COMO FUNCIONA ===================== -->

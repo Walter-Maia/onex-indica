@@ -15,6 +15,7 @@
   --preto: #111010;
   --preto-2: #1C1A19;        /* nós e painéis sobre o navy */
   --preto-3: #2A2725;        /* hover do botão escuro */
+  --preto-fundo: #0A0909;    /* palco da visita (atrás dos pontos) */
   --laranja: #F9681C;       /* acento: botões (texto navy, 6,2:1), traços, destaques grandes sobre o navy */
   --laranja-forte: #F26522; /* hover do botão */
   --laranja-x: #F97A20;     /* laranja do X oficial (peças vetoriais antes da arte oficial entrar) */
@@ -236,154 +237,135 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 @keyframes traco { from { stroke-dashoffset: 1.01; } to { stroke-dashoffset: 0; } }
 
 /* ==========================================================================
-   HERO
+   HERO: VISITA À ONEX
+   A rolagem leva a pessoa para dentro da OneX (fachada → corredor → rack → rede → storage → telefonia → o X); cada
+   parada mostra produtos que dá para indicar. As cenas são desenhadas em pontos por assets/js/visita.js (efeito
+   "Sunset" do editor ASCII do 21st.dev, refeito em Canvas2D com a paleta da OneX; parâmetros comentados no JS).
+   Base (sem JS, movimento reduzido, ?fx=0): caixa preta com a fachada em pontos atrás do texto e as paradas como
+   cartões, cada um com a sua cena em pontos. html.visita-on (decidido no <head>): a seção fica alta, o palco fica
+   preso na tela, começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim;
+   o JS troca as cenas e as legendas conforme a rolagem (--visita-m: 1 = caixa, 0 = tela inteira).
    ========================================================================== */
-.hero { margin-top: var(--caixa-margem); }
-.hero__fundo { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.hero__poster, .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 62%; }
-.hero__poster { opacity: 0.5; }
-.hero__video { opacity: 0; transition: opacity 900ms var(--ease-out); }
-.hero__video.tocando { opacity: 0.5; }
-/* véu navy: o texto fica sempre sobre fundo escuro e calmo; a luz aparece por baixo da arte */
-.hero__fundo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17, 16, 16, 0.9) 0%, rgba(17, 16, 16, 0.82) 48%, rgba(17, 16, 16, 0.5) 78%, rgba(17, 16, 16, 0.72) 100%); }
-@media (min-width: 960px) {
-  .hero__fundo::after { background: linear-gradient(90deg, rgba(17, 16, 16, 0.96) 0%, rgba(17, 16, 16, 0.88) 38%, rgba(17, 16, 16, 0.48) 70%, rgba(17, 16, 16, 0.64) 100%); }
+.visita { position: relative; margin: var(--caixa-margem) var(--caixa-margem) 0; border-radius: var(--caixa-raio); background: var(--preto-fundo); color: var(--sobre-preto); overflow: hidden; overflow: clip; isolation: isolate; }
+.visita h1, .visita h3, .visita strong { color: var(--branco); }
+.visita .indice { color: var(--laranja); }
+.visita a:not(.botao) { color: var(--branco); }
+.visita :focus-visible { outline-color: var(--branco); }
+.visita__palco { position: relative; }
+.visita__moldura { position: absolute; inset: 0 0 auto; height: min(100svh, 940px); border-radius: var(--caixa-raio); pointer-events: none; }
+.visita__arte { position: absolute; inset: 0 0 auto; height: min(100svh, 940px); z-index: -1; overflow: hidden; pointer-events: none; background: var(--preto-fundo); }
+.visita__poster { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transition: opacity 700ms var(--ease-out); }
+.visita__tela, .visita__brilho { display: none; }
+/* vinheta (55%) e o véu que segura o texto: embaixo no retrato, à esquerda na paisagem; na base, o fim esfuma no preto */
+.visita__arte::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, var(--preto-fundo) 0%, rgba(10, 9, 9, 0.88) 34%, rgba(10, 9, 9, 0) 64%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+@media (min-aspect-ratio: 9/10) {
+  .visita__arte::after { background: linear-gradient(0deg, var(--preto-fundo) 0%, rgba(10, 9, 9, 0) 22%), linear-gradient(90deg, rgba(10, 9, 9, 0.9) 0%, rgba(10, 9, 9, 0.66) 30%, rgba(10, 9, 9, 0) 56%), radial-gradient(110% 100% at 66% 50%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
 }
-.hero__grade { max-width: calc(var(--largura) + 2 * var(--lateral)); margin: 0 auto; padding: calc(var(--altura-topo) + var(--e6)) var(--lateral) var(--e7); display: grid; gap: var(--e6); }
-.hero__texto { max-width: 38rem; }
+
+/* texto de abertura (o hero de fato) */
+.visita__coluna { position: relative; max-width: calc(var(--largura) + 2 * var(--lateral)); margin: 0 auto; padding: 0 var(--lateral) var(--e8); }
+.visita__abertura { min-height: min(100svh, 940px); display: flex; flex-direction: column; justify-content: flex-end; padding: calc(var(--altura-topo) + var(--e8)) 0 var(--e7); max-width: 38rem; }
+@media (min-aspect-ratio: 9/10) { .visita__abertura { justify-content: center; } }
 .hero__olho { display: flex; align-items: center; gap: 10px; margin-bottom: var(--e4); font-size: 0.875rem; font-weight: 700; line-height: 1.3; color: var(--laranja); }
 .mini-x { width: 20px; height: auto; flex: none; fill: var(--laranja); }
-.hero h1 { color: var(--branco); font-weight: 800; font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.03em; }
+.visita h1 { font-weight: 800; font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.03em; }
 .h1__a, .h1__b { display: block; }
-.h1__b { color: var(--laranja); }
+.visita .h1__b { color: var(--laranja); }
 .hero__sub { margin-top: var(--e5); font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); line-height: 1.55; color: rgba(255, 255, 255, 0.88); max-width: 34rem; }
 .hero__condicao { font-size: 0.9375rem; line-height: 1.5; padding-left: var(--e4); border-left: 3px solid var(--laranja); max-width: 31rem; color: var(--sobre-preto); }
 .hero__acoes { margin-top: var(--e6); display: flex; flex-wrap: wrap; gap: var(--e3); }
 @media (max-width: 420px) { .hero__acoes .botao { flex: 1 1 100%; } }
-@media (min-width: 960px) {
-  .hero__grade { grid-template-columns: minmax(0, 1fr) minmax(0, min(580px, 47%)); align-items: center; gap: var(--e7); min-height: min(880px, calc(100svh - var(--caixa-margem))); padding-top: calc(var(--altura-topo) + var(--e7)); padding-bottom: var(--e8); }
-}
 /* entrada do texto (só CSS; com a intro, espera a dissolução) */
-.hero__olho, .h1__a, .h1__b, .hero__sub, .hero__condicao, .hero__acoes { animation: sobe 800ms var(--ease-out) backwards; }
+.hero__olho, .h1__a, .h1__b, .hero__sub, .hero__condicao, .visita__abertura .hero__acoes { animation: sobe 800ms var(--ease-out) backwards; }
 .hero__olho { animation-delay: calc(var(--rise-start, 0s) + 80ms); }
 .h1__a { animation-delay: calc(var(--rise-start, 0s) + 140ms); }
 .h1__b { animation-delay: calc(var(--rise-start, 0s) + 230ms); }
 .hero__sub { animation-delay: calc(var(--rise-start, 0s) + 320ms); }
 .hero__condicao { animation-delay: calc(var(--rise-start, 0s) + 400ms); }
-.hero__acoes { animation-delay: calc(var(--rise-start, 0s) + 480ms); }
+.visita__abertura .hero__acoes { animation-delay: calc(var(--rise-start, 0s) + 480ms); }
 @keyframes sobe { from { opacity: 0; transform: translateY(18px); } }
-
-/* botão de pausa do vídeo de fundo (WCAG 2.2.2: movimento em loop ao lado de conteúdo pede como parar) */
-.hero__pausa {
-  position: absolute; right: var(--e4); bottom: var(--e4); z-index: 2; width: 40px; height: 40px; padding: 10px; border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(17, 16, 16, 0.55); color: var(--branco); cursor: pointer;
-  touch-action: manipulation; transition: background-color var(--d-micro) var(--ease-out), border-color var(--d-micro) var(--ease-out);
-}
-.hero__pausa:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.6); }
-.hero__pausa svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.hero__pausa .tocar__icone { display: none; }
-.hero__pausa[aria-pressed="true"] .tocar__icone { display: block; fill: currentColor; stroke: none; }
-.hero__pausa[aria-pressed="true"] .pausa__icone { display: none; }
-
-/* ==========================================================================
-   CENA DO HERO: a indicação contada sem depender de texto
-   Palco: viewBox -250 -250 500 460. O X fica no topo (centrado no chevron); as pernas dele apontam para você
-   (-173, 60) e para a empresa indicada (173, 60). O quadro final (sem JS, movimento reduzido, ?fx=0) é o estado base;
-   .em-cena toca a história uma vez e para no quadro final; .pausada congela (aba oculta e repouso fora da tela).
-   ROTEIRO (s, a partir de .em-cena)
-   0,00–0,50  você e a empresa sobem 8 px e aparecem (0,12 s entre os dois); trilhos pontilhados acendem
-   0,05–0,45  o X aparece só em contorno (fantasma)
-   0,35–0,70  aro laranja em você: é você quem age
-   0,55–1,35  1º gesto: o traço corre de você até a empresa (ponta de luz na frente) ................ T1 + T2
-   1,30       a empresa acende (aro) e solta um pulso único
-   1,45–1,90  o contrato sobe da empresa; 1,75–2,25 a assinatura se desenha; 2,15–2,55 o selo assenta
-   2,40–3,00  2º gesto: o traço sobe da empresa pela perna direita do X
-   2,95–3,99  as três peças do X correm pelos eixos e travam no lugar (0,07 s entre elas); o contorno some
-   3,40–3,70  a arte oficial do X entra por cima das peças
-   3,55–4,15  3º gesto: o traço desce pela perna esquerda do X até você
-   4,10–4,65  brilho em você e o cartão "100% da 1ª parcela" sobe (o único brilho da cena)
-   Cada trecho ganha a seta de sentido quando termina. Total: 4,65 s; depois, parado.
-   ========================================================================== */
-.cena { position: relative; width: 100%; max-width: 580px; margin-inline: auto; aspect-ratio: 500 / 460; container-type: inline-size; animation: aparece 700ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 200ms); }
-.cena { isolation: isolate; }
-@media (min-width: 600px) and (max-width: 959.98px) { .cena { max-width: 500px; } }
-/* um "remanso" navy atrás da arte: a luz do vídeo fica em volta e não disputa com o traço da história */
-.cena::before { content: ""; position: absolute; z-index: -1; inset: -8% -14%; background: radial-gradient(closest-side, rgba(17, 16, 16, 0.82), rgba(17, 16, 16, 0.55) 62%, rgba(17, 16, 16, 0)); pointer-events: none; }
-.cena__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.cn-trilhos path { fill: none; stroke: rgba(255, 255, 255, 0.2); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 0.1 7; }
-.cn-linha { fill: none; stroke: var(--laranja); stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 1 2; stroke-dashoffset: 0; }
-.cn-seta { fill: none; stroke: var(--laranja); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.cn-x-fantasma path { fill: none; stroke: rgba(255, 255, 255, 0.34); stroke-width: 5; stroke-linejoin: round; opacity: 0; }
-.cn-peca { fill: var(--laranja-x); opacity: 0; }
-.cn-no__base { fill: var(--preto-2); stroke: rgba(255, 255, 255, 0.22); stroke-width: 1.5; }
-.cn-no__aro { fill: none; stroke: var(--laranja); stroke-width: 2.5; }
-.cn-no__icone { fill: none; stroke: var(--branco); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.cn-janelas { stroke-width: 2.8; }
-.cn-pulso { fill: none; stroke: var(--laranja); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
-.cn-doc__folha { fill: var(--branco); }
-.cn-doc__texto { fill: none; stroke: #CFC8C0; stroke-width: 2.6; stroke-linecap: round; }
-.cn-doc__assinatura { fill: none; stroke: var(--preto); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
-.cn-doc__selo { transform-box: fill-box; transform-origin: center; }
-.cn-doc__selo circle { fill: var(--laranja); stroke: var(--preto); stroke-width: 2.5; }
-.cn-doc__selo path { fill: none; stroke: var(--preto); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.cn-caneta__luz { opacity: 0; }
-.cn-caneta__luz circle { fill: var(--branco); }
-.cn-caneta__luz .cn-caneta__halo { fill: var(--laranja); opacity: 0.38; }
-/* textos da arte em HTML (nítidos e legíveis em qualquer largura), presos às coordenadas do palco */
-.cn-rotulo, .cn-valor { position: absolute; left: calc((var(--x) + 250) / 500 * 100%); top: calc((var(--y) + 250) / 460 * 100%); }
-.cn-rotulo { translate: -50% -50%; padding: 3px 10px 4px; border-radius: 999px; background: var(--laranja); color: var(--preto); font-weight: 700; font-size: 12px; font-size: clamp(11px, 2.3cqw, 14px); line-height: 1.2; }
-.cn-valor { translate: -50% 0; display: grid; justify-items: center; gap: 3px; padding: 0.55em 1em 0.6em; border-radius: 12px; background: rgba(28, 26, 25, 0.94); border: 1px solid rgba(249, 104, 28, 0.6); white-space: nowrap; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
-.cn-valor strong { font-size: 22px; font-size: clamp(20px, 5.4cqw, 32px); font-weight: 800; line-height: 1; color: var(--laranja); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.cn-valor span { font-size: 12px; font-size: clamp(11px, 2.3cqw, 14px); font-weight: 600; line-height: 1.2; color: rgba(255, 255, 255, 0.88); }
-@media (max-width: 380px) { .cn-trilhos path, .cn-linha { stroke-width: 4; } .cn-no__icone { stroke-width: 3; } }
-
-@media (prefers-reduced-motion: no-preference) {
-  .cena.em-cena .cn-trilhos { animation: aparece 500ms var(--ease-out) both; }
-  .cena.em-cena .cn-no--voce { animation: cn-sobe 500ms var(--ease-out) both; }
-  .cena.em-cena .cn-no--empresa { animation: cn-sobe 500ms var(--ease-out) 120ms both; }
-  .cena.em-cena .cn-rotulo { animation: aparece 400ms var(--ease-out) 200ms both; }
-  .cena.em-cena .cn-x-fantasma path { animation: cn-fantasma 3300ms linear both; }
-  .cena.em-cena .cn-no--voce .cn-no__aro { animation: aparece 350ms var(--ease-out) 350ms both; }
-  .cena.em-cena .cn-linha--1 { animation: cn-desenha 800ms var(--ease-traco) 550ms both; }
-  .cena.em-cena .cn-caneta--1 { animation: cn-anda-1 800ms var(--ease-traco) 550ms both; }
-  .cena.em-cena .cn-caneta--1 .cn-caneta__luz { animation: cn-caneta 800ms linear 550ms both; }
-  .cena.em-cena .cn-seta--1 { animation: aparece 250ms var(--ease-out) 1300ms both; }
-  .cena.em-cena .cn-no--empresa .cn-no__aro { animation: aparece 300ms var(--ease-out) 1300ms both; }
-  .cena.em-cena .cn-pulso { animation: cn-pulso 700ms var(--ease-out) 1300ms both; }
-  .cena.em-cena .cn-doc { animation: cn-sobe 450ms var(--ease-out) 1450ms both; }
-  .cena.em-cena .cn-doc__assinatura { animation: cn-desenha 500ms var(--ease-traco) 1750ms both; }
-  .cena.em-cena .cn-doc__selo { animation: cn-selo 400ms var(--ease-mola) 2150ms both; }
-  .cena.em-cena .cn-linha--2 { animation: cn-desenha 600ms var(--ease-traco) 2400ms both; }
-  .cena.em-cena .cn-caneta--2 { animation: cn-anda-2 600ms var(--ease-traco) 2400ms both; }
-  .cena.em-cena .cn-caneta--2 .cn-caneta__luz { animation: cn-caneta 600ms linear 2400ms both; }
-  .cena.em-cena .cn-seta--2 { animation: aparece 250ms var(--ease-out) 2950ms both; }
-  .cena.em-cena .cn-peca--a { animation: cn-peca-a 900ms 2950ms both; }
-  .cena.em-cena .cn-peca--b { animation: cn-peca-b 900ms 3020ms both; }
-  .cena.em-cena .cn-peca--c { animation: cn-peca-c 900ms 3090ms both; }
-  .cena.em-cena .cn-x-oficial { animation: aparece 300ms ease-out 3400ms both; }
-  .cena.em-cena .cn-linha--3 { animation: cn-desenha 600ms var(--ease-traco) 3550ms both; }
-  .cena.em-cena .cn-caneta--3 { animation: cn-anda-3 600ms var(--ease-traco) 3550ms both; }
-  .cena.em-cena .cn-caneta--3 .cn-caneta__luz { animation: cn-caneta 600ms linear 3550ms both; }
-  .cena.em-cena .cn-seta--3 { animation: aparece 250ms var(--ease-out) 4100ms both; }
-  .cena.em-cena .cn-brilho { animation: aparece 550ms var(--ease-out) 4100ms both; }
-  .cena.em-cena .cn-valor { animation: cn-sobe 500ms var(--ease-out) 4150ms both; }
-  /* aba oculta e repouso fora da tela: tudo congela onde está */
-  .cena.pausada * { animation-play-state: paused !important; }
-}
 @keyframes aparece { from { opacity: 0; } }
-@keyframes cn-sobe { from { opacity: 0; transform: translateY(8px); } }
-@keyframes cn-desenha { 0% { stroke-dashoffset: 1.01; opacity: 0; } 1% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
-@keyframes cn-fantasma { 0% { opacity: 0; } 12% { opacity: 1; } 91% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes cn-pulso { 0% { opacity: 0; transform: scale(1); } 6% { opacity: 0.8; } 100% { opacity: 0; transform: scale(1.55); } }
-@keyframes cn-selo { from { opacity: 0; transform: scale(0.6); } }
-@keyframes cn-caneta { 0% { opacity: 0; } 8% { opacity: 1; } 86% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes cn-anda-1 { from { transform: translate(-133px, 60px); } to { transform: translate(133px, 60px); } }
-@keyframes cn-anda-2 { from { transform: translate(147.2px, 29.45px); } to { transform: translate(63.6px, -69.6px); } }
-@keyframes cn-anda-3 { from { transform: translate(-63.6px, -69.6px); } to { transform: translate(-147.2px, 29.45px); } }
-/* peças em unidades do X (541 × 458): correm pelos próprios eixos até travar; somem por baixo da arte oficial */
-@keyframes cn-peca-a { 0% { opacity: 0; transform: translate(-58px, -68px); animation-timing-function: var(--ease-out); } 50% { opacity: 1; transform: none; } 78% { opacity: 1; } 100% { opacity: 0; transform: none; } }
-@keyframes cn-peca-b { 0% { opacity: 0; transform: translate(60px, -67px); animation-timing-function: var(--ease-out); } 50% { opacity: 1; transform: none; } 78% { opacity: 1; } 100% { opacity: 0; transform: none; } }
-@keyframes cn-peca-c { 0% { opacity: 0; transform: translateY(70px); animation-timing-function: var(--ease-out); } 50% { opacity: 1; transform: none; } 78% { opacity: 1; } 100% { opacity: 0; transform: none; } }
+
+/* paradas (base: cartões com a cena em pontos) */
+.visita__paradas { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e7) var(--e6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.parada { display: grid; align-content: start; gap: var(--e3); max-width: 34rem; }
+.parada__cena { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--caixa-raio) * 0.5); background: #000; margin-bottom: var(--e2); }
+.parada .indice { margin: 0; }
+.parada__titulo { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; }
+.parada__itens { list-style: none; margin: var(--e2) 0 0; padding: 0; display: grid; gap: var(--e3); }
+.parada__itens li { padding-left: var(--e4); border-left: 2px solid rgba(255, 255, 255, 0.16); font-size: 0.9375rem; line-height: 1.5; color: var(--sobre-preto-suave); }
+.parada__itens strong { display: block; font-weight: 700; font-size: 1rem; }
+.parada__ganho { margin: var(--e2) 0 0; font-size: 0.9375rem; line-height: 1.5; font-weight: 600; color: var(--sobre-preto); }
+.visita .parada__ganho strong { color: var(--laranja); }
+.parada__ganho span { font-weight: 500; color: var(--sobre-preto-suave); }
+.visita__fim { margin-top: var(--e8); padding-top: var(--e7); border-top: 1px solid var(--linha-preto); }
+.visita__fim-titulo { margin: 0; max-width: 20ch; font-size: var(--t-h2); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--branco); text-wrap: balance; }
+.visita__fim-titulo span { color: var(--laranja); }
+.visita__dica, .visita__progresso, .visita__pular { display: none; }
+
+/* ---------- visita com rolagem (html.visita-on) ---------- */
+.visita-on .visita { --visita-trechos: 6.5; --visita-trecho: 88svh; height: calc(var(--visita-trechos) * var(--visita-trecho) + 100svh); margin: 0; border-radius: 0; background: none; overflow: visible; }
+.visita-on .visita__palco {
+  position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--preto-fundo);
+  clip-path: inset(calc(var(--visita-m, 1) * var(--caixa-margem)) round calc(var(--visita-m, 1) * var(--caixa-raio)));
+}
+.visita-on .visita__moldura { inset: var(--caixa-margem); height: auto; }
+.visita-on .visita__arte { inset: 0; height: auto; }
+.visita-on .visita__tela, .visita-on .visita__brilho { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: 0; transition: opacity 600ms var(--ease-out); }
+.visita-on .visita__brilho { mix-blend-mode: screen; }
+.visita-on .visita__arte.pronta .visita__tela { opacity: 1; }
+.visita-on .visita__arte.pronta .visita__brilho { opacity: 0.45; }
+.visita-on .visita__arte.pronta .visita__poster { opacity: 0; }
+.visita-on .visita__arte::after { background: linear-gradient(0deg, rgba(10, 9, 9, 0.94) 0%, rgba(10, 9, 9, 0.8) 30%, rgba(10, 9, 9, 0) 58%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+@media (min-aspect-ratio: 9/10) {
+  .visita-on .visita__arte::after { background: linear-gradient(90deg, rgba(10, 9, 9, 0.9) 0%, rgba(10, 9, 9, 0.66) 30%, rgba(10, 9, 9, 0) 56%), radial-gradient(110% 100% at 66% 50%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+}
+/* as legendas ocupam a mesma célula: embaixo no retrato, no meio à esquerda na paisagem */
+.visita-on .visita__coluna {
+  position: absolute; inset: 0; max-width: none; margin: 0; pointer-events: none;
+  padding: calc(var(--altura-topo) + var(--caixa-margem) + var(--e6)) max(var(--lateral), (100% - var(--largura)) / 2) calc(var(--e8) + env(safe-area-inset-bottom, 0px));
+  display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); align-items: end;
+}
+.visita-on .visita__paradas { grid-area: 1 / 1; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); align-items: end; gap: 0; }
+.visita-on .visita__abertura, .visita-on .visita__fim { grid-area: 1 / 1; }
+.visita-on .parada { grid-area: 1 / 1; max-width: 30rem; }
+.visita-on .visita__abertura { max-width: 34rem; }
+@media (min-aspect-ratio: 9/10) { .visita-on .visita__coluna, .visita-on .visita__paradas { align-items: center; } }
+.visita-on .visita__abertura { min-height: 0; padding: 0; display: block; }
+.visita-on .visita__fim { margin: 0; padding: 0; border: 0; max-width: 30rem; }
+.visita-on .parada__cena { display: none; }
+/* celular em pé: a condição sai da abertura (o subtítulo já diz que a 1ª parcela é sua quando a empresa contrata) e a fachada ganha espaço */
+@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .visita-on .hero__condicao { display: none; } }
+/* celular baixo (SE, 320 × 640): a abertura enxuga para caber entre o cabeçalho e o fio de progresso */
+@media (max-aspect-ratio: 9/10) and (max-height: 720px) {
+  .visita-on .hero__olho, .visita-on .visita__abertura .visita__dica { display: none; }
+  .visita-on .visita h1 { font-size: clamp(1.875rem, 1.2rem + 3.2vw, 2.25rem); }
+  .visita-on .hero__sub { margin-top: var(--e4); font-size: 0.9375rem; line-height: 1.5; }
+  .visita-on .visita__abertura .hero__acoes { margin-top: var(--e5); gap: var(--e2); }
+  .visita-on .visita__abertura .botao { min-height: 44px; padding-block: var(--e2); }
+}
+.visita-on [data-parada] { opacity: 0; will-change: opacity, transform; }
+.visita-on [data-parada="0"] { opacity: 1; }
+.visita-on [data-parada].ativa { pointer-events: auto; }
+.visita-on .visita__dica { display: flex; align-items: center; gap: 12px; margin: var(--e6) 0 0; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em; color: var(--sobre-preto-suave); animation: aparece 600ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 900ms); }
+.visita__dica span { width: 1.5px; height: 28px; border-radius: 2px; background: linear-gradient(var(--laranja), rgba(249, 104, 28, 0)); transform-origin: top; animation: dica 1.8s var(--ease-out) 4 both; animation-delay: calc(var(--rise-start, 0s) + 1200ms); }
+@keyframes dica { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+/* progresso: trilho vertical à direita (paisagem) ou fio embaixo (retrato) */
+.visita-on .visita__progresso { display: block; position: absolute; left: var(--lateral); right: var(--lateral); bottom: calc(var(--e5) + env(safe-area-inset-bottom, 0px)); height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+.visita__progresso span { display: block; width: 100%; height: 100%; background: var(--laranja); transform-origin: left; transform: scaleX(var(--p, 0)); }
+@media (min-aspect-ratio: 9/10) {
+  .visita-on .visita__progresso { left: auto; right: max(var(--lateral), (100% - var(--largura)) / 2 - var(--e6)); top: 50%; bottom: auto; width: 2px; height: 140px; margin-top: -70px; }
+  .visita__progresso span { transform-origin: top; transform: scaleY(var(--p, 0)); }
+}
+.visita-on a.visita__pular {
+  display: inline-flex; align-items: center; gap: 6px; position: absolute; z-index: 2; right: max(var(--lateral), (100% - var(--largura)) / 2);
+  top: calc(var(--altura-topo) + 2 * var(--caixa-margem) + var(--e3)); padding: var(--e2) var(--e1); border-radius: 8px;
+  font-size: 0.8125rem; font-weight: 700; text-decoration: none; color: var(--sobre-preto-suave); transition: color var(--d-micro) var(--ease-out);
+}
+.visita-on a.visita__pular:hover { color: var(--branco); }
+.visita-on .no-fim a.visita__pular { opacity: 0; visibility: hidden; transition: opacity 300ms var(--ease-out), visibility 0s 300ms; }
+.visita__pular svg { width: 16px; height: 16px; transform: rotate(90deg); }
+@media (min-aspect-ratio: 9/10) { .visita-on a.visita__pular { top: auto; bottom: calc(var(--e6) + env(safe-area-inset-bottom, 0px)); } }
 
 /* ==========================================================================
    COMO FUNCIONA: passos com nó numerado, trilho fantasma e linha laranja que liga as etapas
@@ -807,9 +789,9 @@ html.intro-ativa::before { content: ""; position: fixed; inset: 0; z-index: 900;
 }
 .fx-0 { scroll-behavior: auto; }
 .fx-0 *, .fx-0 *::before, .fx-0 *::after { animation: none !important; transition: none !important; }
-.fx-0 .hero__video { display: none; }
 
 @media print {
-  .topo, .cta-fixo, .hero__fundo, .hero__pausa, .marca-dagua { display: none !important; }
+  .topo, .cta-fixo, .visita__arte, .visita__pular, .visita__progresso, .marca-dagua { display: none !important; }
+  .visita { background: none; color: var(--cinza); }
   .caixa { border-radius: 0; }
 }

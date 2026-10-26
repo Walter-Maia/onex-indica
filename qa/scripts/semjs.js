@@ -16,7 +16,7 @@ const SAIDA = path.resolve(RAIZ, 'qa', process.argv[2] || 'semjs');
       await p.foto(path.join(SAIDA, w + '-semjs.jpg'), { inteira: true, escala: w > 900 ? 0.5 : 0.75 });
       await p.s('Emulation.setScriptExecutionDisabled', { value: false });
       // lê o DOM (o JS da página continua sem ter rodado nesta carga)
-      console.log(w, await p.avalia('JSON.stringify({classes: document.documentElement.className || "(nenhuma)", overlay: !!document.querySelector(".ix"), sw: document.documentElement.scrollWidth, iw: innerWidth, h1: getComputedStyle(document.querySelector("h1 .h1__b")).opacity, cena: getComputedStyle(document.querySelector(".cn-x-oficial")).opacity, noscript: document.querySelectorAll("noscript").length})'));
+      console.log(w, await p.avalia('JSON.stringify({classes: document.documentElement.className || "(nenhuma)", overlay: !!document.querySelector(".ix"), sw: document.documentElement.scrollWidth, iw: innerWidth, h1: getComputedStyle(document.querySelector("h1 .h1__b")).opacity, poster: document.querySelector(".visita__poster").naturalWidth, noscript: document.querySelectorAll("noscript").length})'));
     }
   } finally { await b.fecha(); }
 })().catch((e) => { console.error('ERRO', e); process.exit(1); });

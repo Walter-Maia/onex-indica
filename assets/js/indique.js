@@ -11,20 +11,9 @@
   var temIO = 'IntersectionObserver' in window;
   var estatico = raiz.classList.contains('fx-0');
   var semMovimento = function () { return estatico || reduzido.matches || !temIO; };
-  var introAtiva = function () { return raiz.classList.contains('intro-ativa'); };
   var $ = function (s, c) { return (c || doc).querySelector(s); };
   var $$ = function (s, c) { return [].slice.call((c || doc).querySelectorAll(s)); };
   var ponteiroFino = window.matchMedia('(hover: hover) and (pointer: fine)');
-  // chama fn quando a intro (se houver) terminar
-  var depoisDaIntro = function (fn) {
-    if (!introAtiva() || !('MutationObserver' in window)) { fn(); return; }
-    var mo = new MutationObserver(function () {
-      if (introAtiva()) return;
-      mo.disconnect();
-      fn();
-    });
-    mo.observe(raiz, { attributes: true, attributeFilter: ['class'] });
-  };
 
   /* 1. Cabeçalho: ganha fundo depois da rolagem (sentinela, sem listener de scroll), troca de tom quando uma caixa
         navy passa pela linha do meio dele e abre o menu no celular */
@@ -146,106 +135,13 @@
   };
   var com = function (base, extra) { for (var k in extra) base[k] = extra[k]; return base; };
 
-  /* 3a. Cena do hero: toca uma vez quando o hero aparece (depois da intro, se houver) e para no quadro final; quando o
-         hero sai inteiro da tela, volta ao início parada (.pausada) e toca de novo na volta. Aba oculta congela. */
-  (function cena() {
-    var el = $('[data-cena]');
-    if (!el || semMovimento()) return;
-    var naTela = false;
-    var tocando = false;
-    var arma = function () {
-      tocando = false;
-      el.classList.remove('em-cena');
-      void el.getBoundingClientRect(); // recria as animações do zero
-      el.classList.add('em-cena', 'pausada');
-    };
-    var toca = function () {
-      if (introAtiva()) return;
-      tocando = true;
-      el.classList.toggle('pausada', doc.hidden);
-    };
-    doc.addEventListener('visibilitychange', function () { if (tocando) el.classList.toggle('pausada', doc.hidden); });
-
-    // carga: se o script chegou tarde (a arte já está visível há um tempo), não volta ao início na frente da pessoa
-    var tarde = !introAtiva() && performance.now() > 1500;
-    if (!tarde) arma();
-    depoisDaIntro(function () { if (naTela && el.classList.contains('em-cena')) toca(); });
-    new IntersectionObserver(function (entradas) {
-      var e = entradas[entradas.length - 1];
-      var antes = naTela;
-      naTela = e.isIntersecting && e.intersectionRatio >= 0.3;
-      if (!e.isIntersecting) { if (tocando || !el.classList.contains('em-cena')) arma(); return; }
-      if (naTela && !antes && el.classList.contains('pausada') && !tocando) toca();
-    }, { threshold: [0, 0.3, 0.6] }).observe(el);
-  })();
-
-  /* 3b. Vídeo de fundo do hero: só com movimento liberado, depois da intro, com o hero na tela e a aba visível.
-         Escolhe a versão leve no celular. Se não carregar ou não tocar, fica o pôster. Botão de pausa (WCAG 2.2.2). */
-  (function videoDeFundo() {
-    var video = $('[data-video]');
-    var botao = $('[data-video-pausa]');
-    var hero = $('[data-hero]');
-    if (!video || !hero || semMovimento()) return;
-    var CHAVE = 'onex-indique-video-pausado';
-    var pausadoPelaPessoa = false;
-    try { pausadoPelaPessoa = sessionStorage.getItem(CHAVE) === '1'; } catch (e) { /* storage bloqueado */ }
-    var carregado = false;
-    var falhou = false;
-    var naTela = false;
-    var carrega = function () {
-      if (carregado) return;
-      carregado = true;
-      var pequeno = window.matchMedia('(max-width: 767.98px)').matches;
-      video.src = pequeno ? video.getAttribute('data-src-pequeno') : video.getAttribute('data-src');
-    };
-    var mostraBotao = function () {
-      if (!botao || falhou) return;
-      botao.hidden = false;
-      botao.setAttribute('aria-pressed', pausadoPelaPessoa ? 'true' : 'false');
-      botao.setAttribute('aria-label', pausadoPelaPessoa ? 'Retomar a animação de fundo' : 'Pausar a animação de fundo');
-    };
-    var atualiza = function () {
-      if (falhou) return;
-      var deveTocar = naTela && !doc.hidden && !pausadoPelaPessoa && !introAtiva();
-      if (deveTocar) {
-        carrega();
-        var promessa = video.play();
-        if (promessa && promessa.catch) promessa.catch(function () { /* autoplay recusado: fica o pôster */ });
-      } else if (!video.paused) {
-        video.pause();
-      }
-    };
-    video.addEventListener('playing', function () { video.classList.add('tocando'); mostraBotao(); });
-    video.addEventListener('error', function () {
-      falhou = true;
-      video.classList.remove('tocando');
-      if (botao) botao.hidden = true;
-    });
-    if (botao) botao.addEventListener('click', function () {
-      pausadoPelaPessoa = !pausadoPelaPessoa;
-      try { sessionStorage.setItem(CHAVE, pausadoPelaPessoa ? '1' : '0'); } catch (e) { /* storage bloqueado */ }
-      mostraBotao();
-      if (pausadoPelaPessoa) video.pause(); else atualiza();
-    });
-    if (pausadoPelaPessoa) mostraBotao();
-    doc.addEventListener('visibilitychange', atualiza);
-    new IntersectionObserver(function (entradas) {
-      naTela = entradas[0].isIntersecting;
-      atualiza();
-    }, { threshold: 0.15 }).observe(hero);
-    depoisDaIntro(atualiza);
-    reduzido.addEventListener && reduzido.addEventListener('change', function () {
-      if (reduzido.matches) { pausadoPelaPessoa = true; video.pause(); video.classList.remove('tocando'); }
-    });
-  })();
-
-  /* 3c. Passos (nó → título → linha) e marcas-d'água do X que se desenham */
+  /* 3a. Passos (nó → título → linha) e marcas-d'água do X que se desenham */
   repete($('[data-passos]'), com(porClasses('armada', 'desenhando'), { limiar: 0.35, duracao: 2500 }));
   $$('[data-desenha]').forEach(function (el) {
     repete(el, com(porClasses('armada', 'desenhando'), { limiar: 0.2, duracao: 2700 }));
   });
 
-  /* 3d. Ícones dos produtos e dos motivos: cada um com o seu movimento; tocam em sequência ao entrar na tela e de
+  /* 3b. Ícones dos produtos e dos motivos: cada um com o seu movimento; tocam em sequência ao entrar na tela e de
          novo quando o ponteiro passa pelo item */
   (function icones() {
     if (semMovimento()) return;
@@ -275,7 +171,7 @@
     });
   })();
 
-  /* 3e. Títulos H2 linha a linha: cada linha sobe de dentro da própria máscara, 90 ms entre linhas.
+  /* 3c. Títulos H2 linha a linha: cada linha sobe de dentro da própria máscara, 90 ms entre linhas.
          O texto inteiro fica num trecho só para leitores de tela; as linhas visuais ficam ocultas para eles. */
   (function titulosPorLinha() {
     var titulos = $$('[data-revela]');

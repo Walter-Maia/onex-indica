@@ -21,7 +21,7 @@ const ALTURA = { 320: 640, 360: 740, 390: 844, 768: 1024, 820: 1180, 1024: 768, 
       const alt = await p.avalia('document.documentElement.scrollHeight');
       for (let y = 0; y < alt; y += Math.round(h * 0.55)) { await p.rola(y); await espera(320); }
       await p.rola(alt); await espera(2600);
-      const info = await p.avalia('JSON.stringify({sw: document.documentElement.scrollWidth, iw: innerWidth, h: document.documentElement.scrollHeight, largos: [...document.querySelectorAll("body *")].filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 && getComputedStyle(e).position !== "fixed" && !e.closest(".caixa, .secao--aberta, .hero__fundo, svg"); }).slice(0, 8).map(e => e.tagName + "." + e.className)})');
+      const info = await p.avalia('JSON.stringify({sw: document.documentElement.scrollWidth, iw: innerWidth, h: document.documentElement.scrollHeight, largos: [...document.querySelectorAll("body *")].filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 && getComputedStyle(e).position !== "fixed" && !e.closest(".caixa, .secao--aberta, .visita__arte, svg"); }).slice(0, 8).map(e => e.tagName + "." + e.className)})');
       console.log(w + 'x' + h, info);
       // composição estática (?fx=0): a página inteira sem estados armados de entrada
       await p.vai(urlDe(path.join(RAIZ, 'index.html'), '?fx=0'));
