@@ -279,7 +279,7 @@
       velho.classList.add('sai');
       novo.classList.add('entra');
       valorEl.appendChild(novo);
-      setTimeout(function () { if (velho.parentNode) velho.remove(); }, 260);
+      setTimeout(function () { if (velho.parentNode) velho.remove(); }, 240);
       if (parcelas) {
         parcelas.classList.remove('enche');
         void parcelas.offsetWidth;

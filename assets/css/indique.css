@@ -553,14 +553,15 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 @media (hover: hover) and (pointer: fine) { .chip:hover input:not(:checked) + span { border-color: rgba(255, 255, 255, 0.7); background: rgba(255, 255, 255, 0.06); } }
 .sim__resultado { margin-top: var(--e6); padding-top: var(--e5); border-top: 1px solid var(--linha-preto); }
 .sim__rotulo { margin: 0 0 var(--e1); font-size: 0.875rem; font-weight: 700; color: var(--sobre-preto-suave); }
-/* o valor troca como uma placa: o antigo sobe e some, o novo entra de baixo (algarismos tabulares, sem contagem) */
-.sim__valor { position: relative; margin: 0; overflow: hidden; overflow: clip; font-size: clamp(2.5rem, 1.6rem + 4.2vw, 4.25rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; color: var(--laranja); font-variant-numeric: tabular-nums; }
+/* o valor troca num cruzamento suave: o antigo sobe um pouco e esmaece, o novo só assenta (vindo de baixo) depois que ele sumiu
+   (deslocamento curto, sem recorte nas bordas; algarismos tabulares, sem contagem) */
+.sim__valor { position: relative; margin: 0; font-size: clamp(2.5rem, 1.6rem + 4.2vw, 4.25rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; color: var(--laranja); font-variant-numeric: tabular-nums; }
 .sim__valor--texto { font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.375rem); line-height: 1.2; letter-spacing: -0.02em; }
 .sim__num { display: block; }
-.sim__num.sai { position: absolute; left: 0; top: 0; width: 100%; animation: num-sai 220ms var(--ease-in) both; }
-.sim__num.entra { animation: num-entra 380ms var(--ease-out) both; }
-@keyframes num-sai { to { opacity: 0; transform: translateY(-40%); } }
-@keyframes num-entra { from { opacity: 0; transform: translateY(40%); } }
+.sim__num.sai { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; animation: num-sai 200ms cubic-bezier(.4, 0, 1, 1) both; }
+.sim__num.entra { animation: num-entra 460ms var(--ease-out) 220ms both; }
+@keyframes num-sai { to { opacity: 0; transform: translateY(-0.12em); } }
+@keyframes num-entra { from { opacity: 0; transform: translateY(0.18em); } }
 .sim__conta { margin: var(--e2) 0 0; font-size: 0.9375rem; line-height: 1.5; color: var(--sobre-preto); }
 /* as parcelas do contrato: só a primeira é sua */
 .parcelas { list-style: none; margin: var(--e5) 0 0; padding: 0; display: grid; grid-template-columns: 2.4fr repeat(3, 1fr) 0.7fr; gap: 6px; }
