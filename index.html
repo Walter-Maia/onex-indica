@@ -34,7 +34,7 @@
 <link rel="stylesheet" href="assets/css/indique.css">
 <!-- Intro: decidida antes da primeira pintura. Não roda com #âncora, aba oculta, página já rolada, movimento reduzido
      ou se já foi vista nesta sessão. ?intro=1 força (revisão), ?intro=0 pula e ?fx=0 entrega a composição estática. -->
-<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!rm&&"IntersectionObserver"in window&&!!document.createElement("canvas").getContext)d.classList.add("visita-on");if(/[?&]intro=0\b/.test(q)||rm)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!rm&&"IntersectionObserver"in window&&"WebGLRenderingContext"in window)d.classList.add("visita-on");if(/[?&]intro=0\b/.test(q)||rm)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
 <script src="assets/js/intro.js" defer onerror="document.documentElement.classList.remove('intro-ativa')"></script>
 <script src="assets/js/indique.js" defer></script>
 <script src="assets/js/visita.js" defer onerror="document.documentElement.classList.remove('visita-on')"></script>
@@ -136,13 +136,14 @@
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
 <!-- Cabeçalho flutuante: transparente sobre o hero; depois da rolagem vira uma barra arredondada no tom do que passa por
-     baixo. O logo é o oficial, recortado em duas partes (nome e X) só para entrar em partes depois da intro. -->
+     baixo. O logo é o oficial, recortado em duas partes (nome e X) só para entrar em partes depois da intro; o X fica
+     sempre laranja (o do logo oficial), nos dois tons. -->
 <header class="topo" data-topo data-tom="escuro">
   <div class="topo__barra">
     <a class="topo__marca" href="#topo" aria-label="OneX Data Center, voltar ao início">
       <span class="logo" aria-hidden="true">
         <span class="logo__parte logo__parte--nome"><img class="logo__img logo__img--branco" src="assets/img/logo-onex-branco.webp" alt="" width="866" height="250"><img class="logo__img logo__img--cinza" src="assets/img/logo-onex-cinza.webp" alt="" width="866" height="250"></span>
-        <span class="logo__parte logo__parte--x"><img class="logo__img logo__img--branco" src="assets/img/logo-onex-branco.webp" alt="" width="866" height="250"><img class="logo__img logo__img--cinza" src="assets/img/logo-onex-cinza.webp" alt="" width="866" height="250"></span>
+        <span class="logo__parte logo__parte--x"><img class="logo__img logo__img--cinza" src="assets/img/logo-onex-cinza.webp" alt="" width="866" height="250"></span>
       </span>
     </a>
     <nav class="topo__nav" id="menu" aria-label="Seções da página" data-menu-painel>
@@ -167,7 +168,7 @@
   <!-- ===================== HERO: VISITA À ONEX ===================== -->
   <!-- A rolagem leva a pessoa para dentro da OneX: fachada → corredor → rack → rede → storage → telefonia → o X. Cada
        parada mostra produtos que dá para indicar. As cenas são fotos ilustrativas geradas no Higgsfield, desenhadas em
-       pontos por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em Canvas2D).
+       pontos por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em WebGL).
        Sem JS, com movimento reduzido ou ?fx=0: a fachada em pontos (imagem) fica atrás do texto e as paradas viram
        cartões, cada um com a sua cena em pontos. -->
   <section class="visita" id="visita" aria-labelledby="titulo" data-visita data-escuro>
@@ -179,7 +180,6 @@
           <img class="visita__poster" src="assets/img/visita/pontos-0.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
         </picture>
         <canvas class="visita__tela" data-visita-tela></canvas>
-        <canvas class="visita__brilho" data-visita-brilho></canvas>
       </div>
 
       <div class="visita__coluna">

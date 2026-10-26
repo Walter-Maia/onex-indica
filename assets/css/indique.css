@@ -142,6 +142,7 @@ html:not(.js) .topo__barra { background: var(--preto); }
 .logo__img--cinza { opacity: 0; }
 .topo[data-tom="claro"] .logo__img--cinza { opacity: 1; }
 .topo[data-tom="claro"] .logo__img--branco { opacity: 0; }
+.logo__parte--x .logo__img--cinza { opacity: 1; } /* o X é sempre o laranja do logo oficial */
 
 .topo__nav { display: none; }
 .topo__links { list-style: none; margin: 0; padding: 0; }
@@ -240,7 +241,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
    HERO: VISITA À ONEX
    A rolagem leva a pessoa para dentro da OneX (fachada → corredor → rack → rede → storage → telefonia → o X); cada
    parada mostra produtos que dá para indicar. As cenas são desenhadas em pontos por assets/js/visita.js (efeito
-   "Sunset" do editor ASCII do 21st.dev, refeito em Canvas2D com a paleta da OneX; parâmetros comentados no JS).
+   "Sunset" do editor ASCII do 21st.dev, refeito em WebGL com a paleta da OneX; parâmetros comentados no JS).
    Base (sem JS, movimento reduzido, ?fx=0): caixa preta com a fachada em pontos atrás do texto e as paradas como
    cartões, cada um com a sua cena em pontos. html.visita-on (decidido no <head>): a seção fica alta, o palco fica
    preso na tela, começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim;
@@ -255,7 +256,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .visita__moldura { position: absolute; inset: 0 0 auto; height: min(100svh, 940px); border-radius: var(--caixa-raio); pointer-events: none; }
 .visita__arte { position: absolute; inset: 0 0 auto; height: min(100svh, 940px); z-index: -1; overflow: hidden; pointer-events: none; background: var(--preto-fundo); }
 .visita__poster { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transition: opacity 700ms var(--ease-out); }
-.visita__tela, .visita__brilho { display: none; }
+.visita__tela { display: none; }
 /* vinheta (55%) e o véu que segura o texto: embaixo no retrato, à esquerda na paisagem; na base, o fim esfuma no preto */
 .visita__arte::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, var(--preto-fundo) 0%, rgba(10, 9, 9, 0.88) 34%, rgba(10, 9, 9, 0) 64%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
 @media (min-aspect-ratio: 9/10) {
@@ -311,10 +312,8 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 }
 .visita-on .visita__moldura { inset: var(--caixa-margem); height: auto; }
 .visita-on .visita__arte { inset: 0; height: auto; }
-.visita-on .visita__tela, .visita-on .visita__brilho { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: 0; transition: opacity 600ms var(--ease-out); }
-.visita-on .visita__brilho { mix-blend-mode: screen; }
+.visita-on .visita__tela { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: 0; transition: opacity 600ms var(--ease-out); }
 .visita-on .visita__arte.pronta .visita__tela { opacity: 1; }
-.visita-on .visita__arte.pronta .visita__brilho { opacity: 0.45; }
 .visita-on .visita__arte.pronta .visita__poster { opacity: 0; }
 .visita-on .visita__arte::after { background: linear-gradient(0deg, rgba(10, 9, 9, 0.94) 0%, rgba(10, 9, 9, 0.8) 30%, rgba(10, 9, 9, 0) 58%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
 @media (min-aspect-ratio: 9/10) {

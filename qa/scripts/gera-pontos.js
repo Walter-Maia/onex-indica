@@ -15,7 +15,8 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'pontos-'));
 const PECAS = [
   { arq: 'pontos-0.webp', w: 1600, h: 900, dpr: 1, t: 0 },
   { arq: 'pontos-0-retrato.webp', w: 390, h: 844, dpr: 2, t: 0, mobile: true },
-  ...[1, 2, 3, 4, 5].map((k) => ({ arq: 'pontos-' + k + '.webp', w: 800, h: 450, dpr: 1, t: k, centro: true }))
+  // nos cartões, o objeto inteiro (as fotos quadradas encolhem para caber na altura do cartão 16:9)
+  ...[1, 2, 3, 4, 5].map((k) => ({ arq: 'pontos-' + k + '.webp', w: 800, h: 450, dpr: 1, t: k, centro: true, escala: k === 1 ? 1 : 0.85 }))
 ];
 
 (async () => {
@@ -29,7 +30,7 @@ const PECAS = [
       const q = 'document.querySelector("[data-visita]").visitaQA';
       let prontas = false;
       for (let i = 0; i < 40 && !prontas; i++) {
-        prontas = await p.avalia(q + '.quadro(' + peca.t + ', 0, 0' + (peca.centro ? ', [0.5, 0.5], true' : '') + ')');
+        prontas = await p.avalia(q + '.quadro(' + peca.t + ', 0, 0' + (peca.centro ? ', [0.5, 0.5], true, ' + peca.escala : '') + ')');
         if (!prontas) await espera(250);
       }
       const url = await p.avalia(q + '.imagem()');

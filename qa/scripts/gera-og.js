@@ -1,5 +1,5 @@
 // Gera assets/img/og-indique.jpg (1200 × 630): o X da OneX em pontos, desenhado pelo próprio renderizador do hero
-// (assets/js/visita.js, pelo gancho de QA no Edge headless), o logo oficial branco e o texto em Montserrat 800/600
+// (assets/js/visita.js, pelo gancho de QA no Edge headless), o logo oficial branco (com o X laranja) e o texto em Montserrat 800/600
 // (TTF baixado do Google Fonts para uma pasta temporária, fora do projeto), compostos com ffmpeg. Uso: node gera-og.js
 'use strict';
 const fs = require('fs');
@@ -46,9 +46,12 @@ const baixa = (url, destino) => new Promise((ok, falha) => {
   for (const [k, v] of Object.entries(textos)) fs.writeFileSync(path.join(FONTES, k + '.txt'), v, 'utf8');
   const txt = (arq, fonte, tam, cor, x, y) => `drawtext=fontfile=${fonte}:textfile=${arq}.txt:expansion=none:fontsize=${tam}:fontcolor=${cor}:x=${x}:y=${y}`;
   const filtro = [
-    // fundo: o X em pontos sobre o preto; logo oficial branco
+    // fundo: o X em pontos sobre o preto; logo oficial branco com o X laranja do logo oficial (como no cabeçalho:
+    // X em x 639–865, y 0–198 do logo de 866 × 250)
     '[0:v]format=rgba[f1]',
-    '[1:v]scale=230:-1[logo]', '[f1][logo]overlay=x=72:y=58[f2]',
+    "[1:v]format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(gte(X,639)*lt(Y,198),0,alpha(X,Y))'[nome]",
+    '[2:v]format=rgba,crop=227:198:639:0[x]',
+    '[nome][x]overlay=x=639:y=0,scale=230:-1[logo]', '[f1][logo]overlay=x=72:y=58[f2]',
     '[f2]' + [
       txt('l1', 'montserrat-800.ttf', 62, 'white', 72, 196),
       txt('l2', 'montserrat-800.ttf', 62, 'white', 72, 266),
@@ -61,6 +64,7 @@ const baixa = (url, destino) => new Promise((ok, falha) => {
   execFileSync('ffmpeg', ['-v', 'error', '-y',
     '-i', pontos,
     '-i', path.join(IMG, 'logo-onex-branco.webp'),
+    '-i', path.join(IMG, 'logo-onex-cinza.webp'),
     '-filter_complex', filtro, '-map', '[saida]', '-frames:v', '1', '-q:v', '3', saida], { cwd: FONTES, stdio: 'inherit' });
   console.log(saida, fs.statSync(saida).size + ' bytes');
 })().catch((e) => { console.error(e); process.exit(1); });

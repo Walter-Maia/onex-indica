@@ -4,7 +4,7 @@ Página estática (HTML, CSS e JS vanilla, sem build) do programa de indicação
 
 ## Como abrir
 
-Abra `index.html` direto no navegador (funciona em `file://`). Não há dependência local; a única requisição externa é a fonte Montserrat (Google Fonts). Sem internet, a página usa a fonte de reserva (Arial ajustada) e continua legível. Em `file://` o navegador não deixa o canvas ler os pixels das fotos; nesse caso o hero carrega as cenas embutidas em `assets/js/visita-cenas.js` (num servidor, usa os `.webp` normais e esse arquivo nem é baixado).
+Abra `index.html` direto no navegador (funciona em `file://`). Não há dependência local; a única requisição externa é a fonte Montserrat (Google Fonts). Sem internet, a página usa a fonte de reserva (Arial ajustada) e continua legível. Em `file://` o navegador não deixa o script ler os pixels das fotos; nesse caso o hero carrega as cenas embutidas em `assets/js/visita-cenas.js` (num servidor, usa os `.webp` normais e esse arquivo nem é baixado).
 
 | Parâmetro | O que faz |
 |---|---|
@@ -21,18 +21,18 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 | `index.html` | conteúdo, SEO, JSON-LD (Organization, WebPage, BreadcrumbList, HowTo, FAQPage), sprite do X, hero "visita à OneX" |
 | `assets/css/indique.css` | estilos mobile-first, tokens, roteiro comentado da intro, hero (versão estática e `html.visita-on`) |
 | `assets/js/indique.js` | cabeçalho e menu, CTA fixo do celular, efeitos que se repetem, ícones, títulos linha a linha, simulador, formulário |
-| `assets/js/visita.js` | hero: câmera da rolagem e efeito de pontos em Canvas2D ("Sunset" do editor ASCII do 21st.dev, com a paleta da OneX) |
+| `assets/js/visita.js` | hero: câmera da rolagem e efeito de pontos em WebGL ("Sunset" do editor ASCII do 21st.dev, com a paleta da OneX) |
 | `assets/js/visita-cenas.js` | as fotos da visita em data URI, só para `file://` (gerado por `qa/scripts/gera-cenas-js.js`) |
 | `assets/js/intro.js` | intro "conexão" (só roda com `html.intro-ativa`) |
 | `assets/img/` | logo oficial (branco e cinza), X oficial, favicon, `og-indique.jpg` (1200 × 630), `x-luz-*.webp` (não usados na página; guardados para peças) |
-| `assets/img/visita/` | `0-fachada` a `5-voip.webp`: fotos ilustrativas geradas no Higgsfield (1280 px); `6-x.webp`: o X oficial sobre preto; `pontos-*.webp`: as cenas já em pontos, geradas pelo próprio renderizador (`qa/scripts/gera-pontos.js`) para o pôster e a versão estática |
+| `assets/img/visita/` | `0-fachada` a `5-voip.webp`: fotos ilustrativas geradas no Higgsfield, em tons de cinza (só a luz importa; 1600 px as largas, 1024 px as quadradas); `6-x.webp`: o X oficial sobre preto; `pontos-*.webp`: as cenas já em pontos, geradas pelo próprio renderizador (`qa/scripts/gera-pontos.js`) para o pôster e a versão estática |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | rastreamento e resumo do programa para assistentes de IA |
 | `qa/scripts/` | harness de QA (Edge headless por DevTools Protocol via pipe, Node 14) e geradores |
 | `qa/final/` | capturas e registros da verificação final |
 
 ## Identidade aplicada
 
-Preto, branco e laranja (paleta da página OnexCloud, sem azul): laranja `#F9681C` (botões, traços, destaques grandes), preto `#111010` (texto e caixas escuras, token `--preto`), cinza quente `#55504A` (texto corrido, `--cinza`), papel `#F6F4F1`, branco `#FFFFFE`, fundo do hero `#0A0909` (`--preto-fundo`); pontos do hero numa rampa preto → laranja → branco; vermelho `#DD4444` só na borda de campo com erro. Montserrat 300–800. Logo e X sempre oficiais (imagens de `assets/img/`); o cabeçalho recorta o logo oficial em duas partes por `clip-path` só para animar a entrada. As três peças do X usadas nas animações são os polígonos medidos no alfa do PNG oficial; onde o X aparece inteiro, a arte oficial entra por cima no fim.
+Preto, branco e laranja (paleta da página OnexCloud, sem azul): laranja `#F9681C` (botões, traços, destaques grandes), preto `#111010` (texto e caixas escuras, token `--preto`), cinza quente `#55504A` (texto corrido, `--cinza`), papel `#F6F4F1`, branco `#FFFFFE`, fundo do hero `#0A0909` (`--preto-fundo`); pontos do hero numa rampa preto → laranja → branco; vermelho `#DD4444` só na borda de campo com erro. Montserrat 300–800. Logo e X sempre oficiais (imagens de `assets/img/`); o cabeçalho recorta o logo oficial em duas partes por `clip-path` só para animar a entrada, e o X fica sempre laranja (o do logo oficial), sobre o escuro e sobre o claro. As três peças do X usadas nas animações são os polígonos medidos no alfa do PNG oficial; onde o X aparece inteiro, a arte oficial entra por cima no fim.
 
 | Contraste | Razão |
 |---|---|
@@ -73,30 +73,30 @@ A rolagem leva a pessoa para dentro da OneX e cada parada mostra o que dá para 
 |---|---|---|---|
 | abertura | a fachada à noite, a porta acesa | título, oferta e botões | 100% da 1ª parcela |
 | 01 O corredor | o corredor entre os racks | Colocation, área dedicada | 100% da 1ª parcela (sob consulta) |
-| 02 O rack | um rack aberto, LEDs | Servidores dedicados, VPS Linux, virtualização | 100% da 1ª parcela (sob consulta) |
-| 03 A rede | o switch com as fibras | OnexCloud, hospedagem de sites, e-mail profissional | 100% da 1ª parcela (R$ 29,90 no Plano Básico de hospedagem) |
-| 04 O storage | as baias de disco | Backup em nuvem | 100% da 1ª parcela (sob consulta) |
+| 02 O rack | um rack aberto com os servidores | Servidores dedicados, VPS Linux, virtualização | 100% da 1ª parcela (sob consulta) |
+| 03 A rede | o switch com os cabos de rede | OnexCloud, hospedagem de sites, e-mail profissional | 100% da 1ª parcela (R$ 29,90 no Plano Básico de hospedagem) |
+| 04 O storage | o storage com as gavetas de disco | Backup em nuvem | 100% da 1ª parcela (sob consulta) |
 | 05 A telefonia | headset e telefone IP | Telefonia VoIP (Essencial, Profissional, Enterprise) | R$ 99 ou R$ 199 (Enterprise sob consulta) |
 | fim | o X da OneX | "Tudo isso você pode indicar" + botões | a 1ª parcela |
 
-Textos e valores saem da seção de produtos (nada novo). As fotos são **ilustrativas**, geradas no Higgsfield (GPT Image 2.5) só em preto, branco e laranja; o X do fim é o oficial.
+Textos e valores saem da seção de produtos (nada novo). As fotos são **ilustrativas**, geradas no Higgsfield (GPT Image 2.5) com o assunto bem iluminado sobre o preto (para virar pontos legíveis); o X do fim é o oficial.
 
-**Câmera.** A seção tem 6,5 trechos de rolagem (88 svh cada) e o palco fica preso na tela. Cada cena tem um ponto de entrada (a porta, o fim do corredor, um servidor…) e a próxima cena fica aninhada ali, do tamanho daquele ponto; na segunda metade de cada trecho a câmera mergulha nele com zoom exponencial (velocidade constante para o olho, com aceleração e chegada suaves) até a próxima ocupar a tela. A câmera segue a rolagem com uma inércia leve. O palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim. Legendas: uma por parada, no mesmo lugar (à esquerda na paisagem, embaixo no retrato), entram de baixo e saem para cima. Foco de teclado numa legenda fora da tela rola até ela. Fio de progresso e "Pular a visita".
+**Câmera.** A seção tem 6,5 trechos de rolagem (88 svh cada) e o palco fica preso na tela. Cada cena tem um centro (o assunto, parado à direita do texto ou acima dele) e um ponto de entrada (a porta, o fim do corredor, um servidor, uma porta do switch, uma gaveta, a tela do telefone); a próxima cena nasce aninhada ali, do tamanho daquele ponto. Na segunda metade de cada trecho a câmera mergulha nele com zoom exponencial (velocidade constante para o olho, com aceleração e chegada suaves) até a próxima ocupar a tela; a cena de onde se sai apaga enquanto cresce (ampliada demais vira borrão) e a próxima só aparece quando o mergulho começa. A câmera segue a rolagem com uma inércia leve. O palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim. Legendas: uma por parada, no mesmo lugar (à esquerda na paisagem, embaixo no retrato), entram de baixo e saem para cima. Foco de teclado numa legenda fora da tela rola até ela. Fio de progresso e "Pular a visita".
 
-**Efeito de pontos** (`assets/js/visita.js`, parâmetros no topo do arquivo): o "Sunset" do editor ASCII do 21st.dev refeito em Canvas2D.
+**Efeito de pontos** (`assets/js/visita.js`, parâmetros no topo do arquivo): o "Sunset" do editor ASCII do 21st.dev refeito em WebGL.
 
 | Parâmetro do Sunset | Aqui |
 |---|---|
-| `renderMode: "dots"`, `cellSize: 10` | células de 10 px (8 px no celular; até ~150 colunas em telas grandes); raio do ponto = luz^0,8, nada no preto |
-| `contrast: 115`, `brightness: 0` | igual; mais exposição por cena (fotos escuras) e mistura da média com o pixel mais claro da célula (os LEDs não somem) |
+| `renderMode: "dots"`, `cellSize: 10` | células de **5 px** (4 px no celular): o dobro de resolução do original, para os servidores, cabos e teclas aparecerem; raio do ponto = luz^0,8 (até 96% da célula: os pontos encostam sem se fundir), nada no preto |
+| `contrast: 115`, `brightness: 0` | igual; exposição por cena, mistura da média com a amostra mais clara da célula (os LEDs não somem) e reforço de contraste local (a célula contra a média de ~6 células em volta: contornos de racks, gavetas e cabos) |
 | `tint: #ff3b1f`, 32%, `overlay` | trocado pela marca: a cor de cada ponto sai de uma rampa preto → `#B5460C` → `#F9681C` → `#FF9A63` → branco |
-| `bgMode: "solid"`, `bgOpacity: 90` | fundo `#0A0909` com 10% da foto borrada atrás dos pontos |
-| `pfx.bloom: 45`, `pfx.vignette: 55` | cópia a 1/8 borrada em `screen` a 45%; vinheta em gradiente no CSS |
+| `bgMode: "solid"`, `bgOpacity: 90` | fundo `#0A0909` com 10% da cena (na cor da rampa) atrás dos pontos |
+| `pfx.bloom: 45`, `pfx.vignette: 55` | a luz de cada célula (cor × área do ponto) borrada em meia resolução, somada em `screen` a 45%; vinheta em gradiente no CSS |
 | `animStyle: "pulse"`, `animSpeed: 100`, `animIntensity: 60` | o raio respira (±11%, ciclo de 2,4 s) com uma onda leve a partir do centro; acende ao rolar ou mover o ponteiro e assenta 5 s depois |
 
-Os pontos vêm de um atlas pronto (24 cores × 28 raios), um `drawImage` por célula; a amostragem é uma tela pequena (2 × 2 pixels por célula) lida com `getImageData`. Onde fica o texto, os pontos somem (máscara pela borda da coluna de texto na paisagem e pelo topo da legenda da vez no retrato). Pausa fora da tela e com a aba oculta; sem gesto, nada é redesenhado.
+Três passadas na GPU: (1) a grade, um texel por célula, amostra a cena da vez e a próxima (luminância das fotos em texturas com mipmaps, 4 amostras por célula); (2) o bloom, em duas passadas de borrão em meia resolução; (3) os pontos, em que cada pixel da tela acha a sua célula e desenha o ponto com borda suave (nítido em qualquer densidade de tela). As fotos sobem uma vez como textura de luminância (1 byte por pixel); se a GPU tirar o contexto, tudo é refeito quando ele volta. Onde fica o texto, os pontos somem (máscara pela borda da coluna de texto na paisagem e pelo topo da legenda da vez no retrato). Pausa fora da tela e com a aba oculta; sem gesto, nada é redesenhado.
 
-**Quando não roda** (sem JS, sem canvas, movimento reduzido, `?fx=0`, ou se a leitura dos pixels falhar): o `<head>` não liga `html.visita-on` (ou o JS desliga), e o hero vira a versão estática: a fachada em pontos (`pontos-0.webp`, retrato `pontos-0-retrato.webp`) atrás do texto e as paradas como cartões, cada um com a sua cena em pontos.
+**Quando não roda** (sem JS, sem WebGL, movimento reduzido, `?fx=0`, ou se a leitura dos pixels falhar): o `<head>` não liga `html.visita-on` (ou o JS desliga), e o hero vira a versão estática: a fachada em pontos (`pontos-0.webp`, retrato `pontos-0-retrato.webp`) atrás do texto e as paradas como cartões, cada um com a sua cena em pontos.
 
 ## Animações por seção
 
@@ -131,7 +131,7 @@ Tudo anima só `transform`, `opacity`, `stroke-dashoffset` e `clip-path` (cores 
 
 ## SEO e AEO
 
-Title (59 caracteres) e description (154) com "Programa de indicação OneX Data Centers" e a oferta; canonical `https://onexdc.com.br/indique/` (**provisório**); Open Graph e Twitter com `og-indique.jpg` (o X em pontos desenhado pelo renderizador do hero, o logo oficial e o texto, compostos por `qa/scripts/gera-og.js`); `theme-color` navy; JSON-LD com `Organization` (contatos, redes, data centers de Ipatinga e BH), `WebPage`, `BreadcrumbList`, `HowTo` (os 4 passos) e `FAQPage` (as 9 perguntas, com o mesmo texto da página); um único H1 e títulos sem salto; respostas do FAQ com a resposta direta na primeira frase; `llms.txt` com o resumo do programa e o que não é publicado.
+Title (59 caracteres) e description (154) com "Programa de indicação OneX Data Centers" e a oferta; canonical `https://onexdc.com.br/indique/` (**provisório**); Open Graph e Twitter com `og-indique.jpg` (o X em pontos desenhado pelo renderizador do hero, o logo oficial com o X laranja e o texto, compostos por `qa/scripts/gera-og.js`); `theme-color` navy; JSON-LD com `Organization` (contatos, redes, data centers de Ipatinga e BH), `WebPage`, `BreadcrumbList`, `HowTo` (os 4 passos) e `FAQPage` (as 9 perguntas, com o mesmo texto da página); um único H1 e títulos sem salto; respostas do FAQ com a resposta direta na primeira frase; `llms.txt` com o resumo do programa e o que não é publicado.
 
 Na publicação: `robots.txt` só vale na raiz do domínio (se a página ficar em `/indique/`, copie as linhas para o `robots.txt` da raiz); as URLs absolutas de `og:image`, canonical, sitemap e JSON-LD dependem do endereço final.
 
@@ -144,7 +144,7 @@ cd qa/scripts
 node intro.js final/intro 1440,390      # quadros da intro + Escape, sessão, #âncora
 node visita.js final/visita 1440,390    # hero: quadros ao longo da rolagem, fluidez e estouro lateral
 node visita-quadros.js tmp/q 1440 0.5 1 0.0625  # quadros exatos de uma troca de cena
-node visita-custo.js                    # custo de um quadro (amostragem + pontos + bloom)
+QA_GPU=1 node visita-custo.js           # custo de um quadro (grade + bloom, pontos) na GPU de verdade
 node olhar.js final/responsivo 320,1440 # hero, estouro lateral e página inteira em ?fx=0
 node secoes.js final/secoes 1440        # cada seção depois da entrada
 node funcional.js final/funcional       # estrutura, simulador, formulário/WhatsApp, FAQ, foco, menu
@@ -159,7 +159,7 @@ node gera-cenas-js.js                   # refaz assets/js/visita-cenas.js (depoi
 - **Larguras** 320, 360, 390, 768, 1024, 1280, 1440 e 1920 px: `scrollWidth` igual à largura da tela em todas (sem estouro lateral), sem erro de console nem de rede (`qa/final/log-responsivo.txt`, `qa/final/responsivo/`: hero e página inteira em `?fx=0`).
 - **Seções** capturadas depois da entrada de cada uma em 1440 e 390 px (`qa/final/secoes/`), e em 320 px durante o desenvolvimento.
 - **Intro** em quadros de tempo real, 1440 e 390 px (`qa/final/intro/`, folhas de contato `folha-1440.jpg` e `folha-390.jpg`): trilhas entram, cruzam em ~0,6 s com o pulso, peças travam, X oficial, "100%", saída para a caixa do hero e abertura em diagonal, cabeçalho e hero entrando. Também: sessão gravada, Escape pula na hora, recarga na mesma sessão não repete, `#âncora` não roda. As capturas pedidas por linha de comando (`--virtual-time-budget` 300, 1200 e 2200 ms com `?intro=1`, e `?intro=0`/`?fx=0`) estão em `qa/final/cli/`.
-- **Hero "visita"** (26/10/2026, `qa/final/visita/`): quadros em 1440, 1024, 768, 390 e 320 px nas paradas e nas trocas; a próxima cena nasce dentro da porta, do fim do corredor ou do rack e a câmera atravessa; legendas sobre preto limpo (a máscara acompanha o texto); a intro recolhe para a caixa do hero e abre na diagonal; rolagem contínua a 60 quadros/s em todas as larguras; sem estouro lateral; custo de um quadro com GPU ~12 ms em 1440 e 1920 px (~6 ms no celular); movimento reduzido e `?fx=0`: sem `visita-on`, sem canvas, cartões; sem erros de console.
+- **Hero "visita"** (26/10/2026, refeito em WebGL com células de 5 px e fotos novas, `qa/final/visita/`): quadros em 1440, 1024, 768, 390 e 320 px nas paradas e nas trocas; rack, servidores, cabos, gavetas, headset e teclado do telefone reconhecíveis em pontos; a próxima cena nasce na porta, no fim do corredor, num servidor, numa porta do switch, numa gaveta e na tela do telefone, e a anterior apaga enquanto cresce; legendas sobre preto limpo; rolagem contínua a 60 quadros/s em todas as larguras; sem estouro lateral (320 a 1920 px); custo de um quadro numa GPU integrada (Intel UHD) ~5 ms em 1440 e 1920 px, ~3 ms no celular; movimento reduzido e `?fx=0`: sem `visita-on`, sem canvas, cartões; sem erros de console.
 - **Funcional** 25/25 (`qa/final/log-funcional.txt`, capturas em `qa/final/funcional/`): um H1, títulos sem salto, `img` com `alt`/`width`/`height`, botões-ícone com nome, campos com `label` e `autocomplete`, ids únicos; simulador (VoIP Profissional R$ 199,00, Essencial R$ 99,00, Hospedagem R$ 29,90 sem grupo de planos, Colocation e VoIP Enterprise "100% da 1ª parcela", cliques rápidos deixam um valor só); formulário (envio vazio: 8 erros inline e foco no primeiro campo; máscaras; "Abrindo WhatsApp…"; aba nova com `wa.me` → `api.whatsapp.com` e a mensagem completa, inclusive "&"; painel de sucesso; "Indicar outra empresa"); FAQ abre; primeiro Tab no "Pular para o conteúdo"; menu do celular abre, Escape fecha e devolve o foco.
 - **Sem JavaScript** (`qa/final/semjs/`): nenhuma cobertura presa, tudo visível no estado final, cabeçalho navy sólido com os links, aviso `<noscript>` no formulário. O hero vira a versão estática (fachada em pontos e paradas em cartões).
 - **Checklist** `boas-praticas/checklist-revisao-ui.md`: sem `transition: all`; nenhuma animação de largura, altura, posição ou sombra; `outline: none` só em alvos de foco programático (`main` e o painel de sucesso); viewport sem bloqueio de zoom; `scroll-padding-top`; `text-wrap: balance` nos títulos; reticências e aspas tipográficas; `theme-color`; JSON-LD válido como JSON.

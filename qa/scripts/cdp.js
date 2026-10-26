@@ -10,7 +10,8 @@ const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 
 function abre() {
   const perfil = fs.mkdtempSync(path.join(os.tmpdir(), 'edge-qa-'));
-  const args = ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--no-default-browser-check',
+  // QA_GPU=1 usa a GPU de verdade (para medir o custo do WebGL); sem ela, a SwiftShader (CPU) e números pessimistas
+  const args = ['--headless=new', ...(process.env.QA_GPU ? [] : ['--disable-gpu']), '--hide-scrollbars', '--no-first-run', '--no-default-browser-check',
     '--autoplay-policy=no-user-gesture-required', '--remote-debugging-pipe', '--user-data-dir=' + perfil, 'about:blank'];
   const p = spawn(EDGE, args, { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] });
   const escrita = p.stdio[3], leitura = p.stdio[4];
