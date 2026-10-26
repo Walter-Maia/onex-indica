@@ -40,5 +40,5 @@ const PECAS = [
       console.log(peca.arq, Math.round(fs.statSync(path.join(PASTA, peca.arq)).size / 1024) + ' KB', p.erros.filter((e) => !/pontos-/.test(e)).join(' | '));
       await p.s('Page.close').catch(() => {});
     }
-  } finally { await b.fecha(); }
+  } finally { await b.fecha(); fs.rmSync(TMP, { recursive: true, force: true }); }
 })().catch((e) => { console.error(e); process.exit(1); });

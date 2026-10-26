@@ -29,7 +29,14 @@ function abre() {
     const m = { id: ++id, method, params }; if (sessionId) m.sessionId = sessionId;
     pend.set(m.id, { ok, falha }); escrita.write(JSON.stringify(m) + '\0');
   });
-  const fecha = async () => { try { await envia('Browser.close'); } catch (e) { /* já fechado */ } setTimeout(() => { try { p.kill(); } catch (e) { /* ok */ } }, 500); };
+  // fecha o Edge e apaga o perfil temporário (cada perfil tem dezenas de MB; sem isso, a pasta temporária enche o disco)
+  const apagaPerfil = () => { try { fs.rmSync(perfil, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch (e) { /* o Edge ainda segura algum arquivo */ } };
+  const fecha = async () => {
+    try { await envia('Browser.close'); } catch (e) { /* já fechado */ }
+    await new Promise((ok) => { const fim = setTimeout(ok, 3000); p.once('exit', () => { clearTimeout(fim); ok(); }); });
+    try { p.kill(); } catch (e) { /* ok */ }
+    apagaPerfil();
+  };
   return { envia, ouvintes, fecha };
 }
 

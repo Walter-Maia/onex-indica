@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const RAIZ = path.resolve(__dirname, '..', '..');
 const PASTA = path.join(RAIZ, 'assets', 'img', 'visita');
-const fotos = fs.readdirSync(PASTA).filter((f) => /^\d-[a-z]+\.webp$/.test(f)).sort();
+const fotos = fs.readdirSync(PASTA).filter((f) => /^\d-[a-z]+(-hd)?\.webp$/.test(f)).sort();
 const linhas = fotos.map((f) => '  "assets/img/visita/' + f + '": "data:image/webp;base64,' + fs.readFileSync(path.join(PASTA, f)).toString('base64') + '"');
 const js = '/* Gerado por qa/scripts/gera-cenas-js.js: fotos da visita em data URI, só para abrir a página em file:// */\n' +
   'window.VISITA_CENAS = {\n' + linhas.join(',\n') + '\n};\n';

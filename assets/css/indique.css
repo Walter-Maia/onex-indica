@@ -342,6 +342,54 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
   .visita-on .hero__sub { margin-top: var(--e4); font-size: 0.9375rem; line-height: 1.5; }
   .visita-on .visita__abertura .hero__acoes { margin-top: var(--e5); gap: var(--e2); }
   .visita-on .visita__abertura .botao { min-height: 44px; padding-block: var(--e2); }
+  .visita-on .parada { gap: var(--e2); }
+  .visita-on .parada__titulo { font-size: 1.5rem; }
+  .visita-on .parada__itens { margin-top: 0; gap: var(--e2); }
+  .visita-on .parada__itens li { font-size: 0.8125rem; line-height: 1.4; }
+  .visita-on .parada__itens strong { font-size: 0.9375rem; }
+}
+/* paisagem: o título acompanha a altura da tela (em notebooks baixos ele não empurra o resto para fora) */
+@media (min-aspect-ratio: 9/10) {
+  .visita-on .visita h1 { font-size: min(var(--t-h1), 7.2vh); font-size: min(var(--t-h1), 7.2svh); }
+  .visita-on .visita__fim-titulo { font-size: min(var(--t-h2), 5.6vh); font-size: min(var(--t-h2), 5.6svh); }
+}
+/* notebooks (1366 × 768, 1920 × 1080 a 125% ou 150%: a área útil fica entre 600 e 800 px de altura): a abertura e as
+   legendas enxugam para caber entre o cabeçalho e a base; a condição sai (o subtítulo já diz que a 1ª parcela é sua
+   quando a empresa contrata) */
+@media (min-aspect-ratio: 9/10) and (max-height: 820px) {
+  .visita-on .visita__coluna { padding-top: calc(var(--altura-topo) + var(--caixa-margem) + var(--e5)); padding-bottom: var(--e6); }
+  .visita-on .hero__olho { margin-bottom: var(--e3); }
+  .visita-on .hero__sub { margin-top: var(--e4); font-size: 1.0625rem; line-height: 1.5; }
+  .visita-on .hero__condicao { display: none; }
+  .visita-on .visita__abertura .hero__acoes { margin-top: var(--e5); }
+  .visita-on .visita__abertura .visita__dica { margin-top: var(--e5); }
+  .visita-on .parada__titulo { font-size: min(clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem), 5.2vh); font-size: min(clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem), 5.2svh); }
+}
+@media (min-aspect-ratio: 9/10) and (max-height: 640px) {
+  .visita-on .visita__abertura .visita__dica { display: none; }
+  .visita-on .parada { gap: var(--e2); }
+  .visita-on .parada__itens { gap: var(--e2); }
+  .visita-on .parada__itens li { font-size: 0.875rem; line-height: 1.4; }
+}
+/* celular deitado (altura até ~520 px): tudo menor e mais junto; o texto ocupa no máximo 56% da largura para a cena
+   continuar à direita */
+@media (min-aspect-ratio: 9/10) and (max-height: 520px) {
+  .visita-on .visita__coluna { padding-top: calc(var(--altura-topo) + var(--caixa-margem) + var(--e3)); padding-bottom: var(--e4); }
+  .visita-on .visita__abertura { max-width: min(34rem, 56vw); }
+  .visita-on .parada, .visita-on .visita__fim { max-width: min(30rem, 56vw); }
+  .visita-on .visita h1 { font-size: min(var(--t-h1), 6.6vh); font-size: min(var(--t-h1), 6.6svh); }
+  .visita-on .hero__olho { margin-bottom: var(--e2); font-size: 0.75rem; }
+  .visita-on .mini-x { width: 16px; }
+  .visita-on .hero__sub { margin-top: var(--e3); font-size: 0.875rem; line-height: 1.45; }
+  .visita-on .visita__abertura .hero__acoes, .visita-on .visita__fim .hero__acoes { margin-top: var(--e4); gap: var(--e2); }
+  .visita-on .visita__abertura .botao, .visita-on .visita__fim .botao { min-height: 44px; padding-block: var(--e2); font-size: 0.9375rem; }
+  .visita-on .parada { gap: var(--e1); }
+  .visita-on .parada .indice { font-size: 0.75rem; }
+  .visita-on .parada__titulo { font-size: 1.25rem; }
+  .visita-on .parada__itens { margin-top: var(--e1); gap: var(--e1); }
+  .visita-on .parada__itens li { font-size: 0.75rem; line-height: 1.35; padding-left: var(--e3); }
+  .visita-on .parada__itens strong { font-size: 0.875rem; }
+  .visita-on .parada__ganho { margin-top: var(--e1); font-size: 0.8125rem; line-height: 1.35; }
 }
 .visita-on [data-parada] { opacity: 0; will-change: opacity, transform; }
 .visita-on [data-parada="0"] { opacity: 1; }

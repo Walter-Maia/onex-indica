@@ -6,7 +6,7 @@ const { abre, pagina, espera, urlDe } = require('./cdp');
 const RAIZ = path.resolve(__dirname, '..', '..');
 const SAIDA = path.resolve(RAIZ, 'qa', process.argv[2] || 'olhar');
 const LARGURAS = (process.argv[3] || '1440,390').split(',').map(Number);
-const ALTURA = { 320: 640, 360: 740, 390: 844, 768: 1024, 820: 1180, 1024: 768, 1280: 800, 1366: 768, 1440: 900, 1920: 1080 };
+const ALTURA = { 320: 640, 360: 740, 375: 667, 390: 844, 412: 915, 430: 932, 768: 1024, 820: 1180, 1024: 768, 1280: 800, 1366: 657, 1440: 900, 1536: 730, 1920: 1080, 2560: 1271 };
 
 (async () => {
   const b = abre();
