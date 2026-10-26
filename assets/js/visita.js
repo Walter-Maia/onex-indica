@@ -29,7 +29,6 @@
   var palco = secao.querySelector('[data-visita-palco]');
   var arte = secao.querySelector('[data-visita-arte]');
   var tela = secao.querySelector('[data-visita-tela]');
-  var barra = secao.querySelector('[data-visita-progresso]');
   var legendas = [].slice.call(secao.querySelectorAll('[data-parada]'));
   var OPCOES = { alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance' };
   var gl = null;
@@ -84,6 +83,12 @@
   ];
   var N = CENAS.length;
   var CAUDA = 0.5;                       // rolagem parada no fim (o palco volta ao formato de caixa)
+  // opções da seção: data-visita-continua (vem logo depois de outro hero escuro: entra em tela cheia e a abertura
+  // aparece enquanto o palco chega, com t de T0 a 0) e data-visita-espalha (os textos de cada parada se espalham pela
+  // tela e sobem em velocidades diferentes, data-vel)
+  var continua = secao.hasAttribute('data-visita-continua');
+  var espalha = secao.hasAttribute('data-visita-espalha');
+  var T0 = continua ? -0.6 : 0;
   // onde fica o assunto: à direita do texto, no meio da altura livre abaixo do cabeçalho (paisagem; sai da largura
   // real da coluna de texto, em medeLegendas), ou no meio do vão entre o cabeçalho e o texto da vez (retrato; a cada
   // quadro, em desenhaGrade)
@@ -326,6 +331,9 @@
     cab = barraTopo ? barraTopo.offsetTop + barraTopo.offsetHeight : 80;  // o cabeçalho é fixo no topo (offset ignora a animação de entrada)
     if (!W || retrato) { bordaTexto = -10; return; }
     ANCORA[0][1] = Math.min(0.6, (cab + H) / 2 / H);
+    // textos espalhados: a cena fica no meio, um pouco menor, e os pontos não somem atrás do texto (ele fica nos cantos,
+    // sobre a vinheta)
+    if (espalha) { ANCORA[0][0] = 0.5; escalaPaisagem = 0.86; bordaTexto = -10; return; }
     var borda = Math.max.apply(null, caixas.map(function (c) { return c.direita; })) / W;
     ANCORA[0][0] = Math.min(0.74, Math.max(0.64, borda + (1 - borda) * 0.45));
     escalaPaisagem = Math.min(1, (1 - borda) / 0.54);
@@ -386,6 +394,7 @@
   };
   var usaTextura = function (unidade, t) { gl.activeTexture(gl.TEXTURE0 + unidade); gl.bindTexture(gl.TEXTURE_2D, t); };
   var desenhaGrade = function (t) {
+    t = Math.max(0, t);  // antes de o palco chegar (T0 < t < 0), a fachada parada
     topoTexto = retrato ? topoEm(t) : 1e6;
     if (retrato) ANCORA[1][1] = Math.max(0.12, (cab + topoTexto) / 2 / H);
     var ganho = 0, pesoLuz = 0, cam = [];
@@ -448,9 +457,11 @@
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
 
-  /* ---------- legendas, progresso e o formato do palco ---------- */
+  /* ---------- legendas e o formato do palco ---------- */
+  // com data-visita-continua (a visita vem logo depois de outro hero escuro), a abertura aparece enquanto o palco
+  // chega (t negativo: a seção ainda está subindo) e o palco já entra em tela cheia, sem a caixa
   var visibilidade = function (k, d) {
-    var entra = k === 0 ? 1 : suave(-0.22, -0.02, d);
+    var entra = k === 0 ? (continua ? suave(-0.5, -0.1, d) : 1) : suave(-0.22, -0.02, d);
     var sai = k === N - 1 ? 0 : suave(0.38, 0.54, d);
     return Math.max(0, Math.min(entra, 1 - sai));
   };
@@ -460,23 +471,31 @@
       var k = +el.getAttribute('data-parada');
       var d = t - k;
       var v = visibilidade(k, d);
+      // textos espalhados: cada pedaço da legenda (data-vel) sobe na sua velocidade enquanto a parada passa, e eles se
+      // afastam e se aproximam (no retrato, mais de leve: estão empilhados)
+      if (espalha && (v > 0 || el._v > 0)) {
+        el._filhos = el._filhos || [].slice.call(el.querySelectorAll('[data-vel]'));
+        for (var j = 0; j < el._filhos.length; j++) {
+          var y = (0.16 - d) * +el._filhos[j].getAttribute('data-vel') * H * (retrato ? 0.35 : 1);
+          el._filhos[j].style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+        }
+      }
       if (el._v !== undefined && Math.abs(v - el._v) < 0.002) continue;
       el._v = v;
       el.style.opacity = v.toFixed(3);
       el.style.transform = v > 0.999 ? '' : 'translate3d(0,' + ((1 - v) * (d < 0 ? 26 : -26)).toFixed(1) + 'px,0)';
       el.classList.toggle('ativa', v > 0.5);
     }
-    if (barra) barra.style.setProperty('--p', Math.min(1, t / (N - 1)).toFixed(4));
     palco.classList.toggle('no-fim', t > N - 1.4); // no X final, 'Pular a visita' sai de cena
     // o palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim
-    var m = Math.max(1 - suave(0, 0.32, t), suave(N - 1 + 0.08, N - 1 + CAUDA, t));
+    var m = Math.max(continua ? 0 : 1 - suave(0, 0.32, t), suave(N - 1 + 0.08, N - 1 + CAUDA, t));
     palco.style.setProperty('--visita-m', m.toFixed(3));
   };
 
   /* ---------- laço ---------- */
   var alvo = function () {
-    var p = (window.pageYOffset - topoSecao) / curso;
-    return (p < 0 ? 0 : p > 1 ? 1 : p) * (N - 1 + CAUDA);
+    var t = (window.pageYOffset - topoSecao) / curso * (N - 1 + CAUDA);
+    return t < T0 ? T0 : t > N - 1 + CAUDA ? N - 1 + CAUDA : t;
   };
   var encadeado = false;  // este quadro veio logo depois de outro (o intervalo entre eles mede a fluidez)
   var quadro = function (agora) {

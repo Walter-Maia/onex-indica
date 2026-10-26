@@ -27,6 +27,7 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 | `assets/img/` | logo oficial (branco e cinza), X oficial, favicon, `og-indique.jpg` (1200 × 630), `x-luz-*.webp` (não usados na página; guardados para peças) |
 | `assets/img/visita/` | `0-fachada` a `5-voip.webp`: fotos ilustrativas geradas no Higgsfield, em tons de cinza (só a luz importa) e em duas versões: a leve (1280 px as largas, 1024 px as quadradas) e a `-hd` (2048 px), que só telas grandes baixam; `6-x.webp`: o X oficial sobre preto; `pontos-*.webp`: as cenas já em pontos, geradas pelo próprio renderizador (`qa/scripts/gera-pontos.js`) para o pôster e a versão estática |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | rastreamento e resumo do programa para assistentes de IA |
+| `docs/` | `parallax.md` (as versões do hero em parallax) e `parallax-proximos-passos.md` (as 4 sugestões para a visita) |
 | `qa/scripts/` | harness de QA (Edge headless por DevTools Protocol via pipe, Node 14) e geradores |
 | `qa/final/` | capturas e registros da verificação final |
 
@@ -81,7 +82,7 @@ A rolagem leva a pessoa para dentro da OneX e cada parada mostra o que dá para 
 
 Textos e valores saem da seção de produtos (nada novo). As fotos são **ilustrativas**, geradas no Higgsfield (GPT Image 2.5) com o assunto bem iluminado sobre o preto (para virar pontos legíveis); o X do fim é o oficial.
 
-**Câmera.** A seção tem 6,5 trechos de rolagem (88 svh cada) e o palco fica preso na tela. Cada cena tem um centro (o assunto, parado à direita do texto ou acima dele) e um ponto de entrada (a porta, o fim do corredor, um servidor, uma porta do switch, uma gaveta, a tela do telefone); a próxima cena nasce aninhada ali, do tamanho daquele ponto. Na segunda metade de cada trecho a câmera mergulha nele com zoom exponencial (velocidade constante para o olho, com aceleração e chegada suaves) até a próxima ocupar a tela; a cena de onde se sai apaga enquanto cresce (ampliada demais vira borrão) e a próxima só aparece quando o mergulho começa. A câmera segue a rolagem com uma inércia leve. O palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim. Legendas: uma por parada, no mesmo lugar (à esquerda na paisagem, embaixo no retrato), entram de baixo e saem para cima. Foco de teclado numa legenda fora da tela rola até ela. Fio de progresso e "Pular a visita".
+**Câmera.** A seção tem 6,5 trechos de rolagem (88 svh cada) e o palco fica preso na tela. Cada cena tem um centro (o assunto, parado à direita do texto ou acima dele) e um ponto de entrada (a porta, o fim do corredor, um servidor, uma porta do switch, uma gaveta, a tela do telefone); a próxima cena nasce aninhada ali, do tamanho daquele ponto. Na segunda metade de cada trecho a câmera mergulha nele com zoom exponencial (velocidade constante para o olho, com aceleração e chegada suaves) até a próxima ocupar a tela; a cena de onde se sai apaga enquanto cresce (ampliada demais vira borrão) e a próxima só aparece quando o mergulho começa. A câmera segue a rolagem com uma inércia leve. O palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim. Legendas: uma por parada, no mesmo lugar (à esquerda na paisagem, embaixo no retrato), entram de baixo e saem para cima. Foco de teclado numa legenda fora da tela rola até ela. "Pular a visita" leva direto ao "Como funciona".
 
 **Efeito de pontos** (`assets/js/visita.js`, parâmetros no topo do arquivo): o "Sunset" do editor ASCII do 21st.dev refeito em WebGL.
 
@@ -100,6 +101,21 @@ Três passadas na GPU: (1) a grade, um texel por célula, amostra a cena da vez 
 
 **Quando não roda** (sem JS, sem WebGL, movimento reduzido, `?fx=0`, ou se a leitura dos pixels falhar): o `<head>` não liga `html.visita-on` (ou o JS desliga), e o hero vira a versão estática: a fachada em pontos (`pontos-0.webp`, retrato `pontos-0-retrato.webp`) atrás do texto e as paradas como cartões, cada um com a sua cena em pontos.
 
+## Hero em parallax (duas versões para comparar)
+
+Duas páginas de teste, fora do índice de busca (`noindex`), com o mesmo conteúdo do `index.html` e só o hero trocado. O registro completo (arquivos, ajustes, como refazer as camadas, testes) está em [docs/parallax.md](docs/parallax.md), e as sugestões para deixar a visita mais dinâmica a partir da 3ª parada, em [docs/parallax-proximos-passos.md](docs/parallax-proximos-passos.md).
+
+| Página | Hero |
+|---|---|
+| `index-parallax.html` | só o parallax: o texto do hero sobre as camadas, e a página segue direto para o "Como funciona" |
+| `index-parallax-visita.html` | versão imersiva: o parallax em tela cheia abre a página, o cabeçalho é só a marca da OneX (sem links, botão nem barra) e, ao descer, o texto do parallax apaga e a visita entra emendada, já em tela cheia (`data-visita-continua`: sem a caixa, com a abertura "Entre no data center e veja o que dá para indicar" aparecendo enquanto o palco chega). Na visita, os textos se espalham pela tela (`data-visita-espalha`): na paisagem, a cena fica no meio, o rótulo e o título num canto do alto e os itens e o ganho nos cantos de baixo, espelhados de uma parada para a outra; cada pedaço sobe na sua velocidade (`data-vel`), o que dá o parallax dos textos. No retrato, os textos continuam empilhados embaixo, com um parallax mais leve. "Pular a visita" sobe para a linha do cabeçalho. A seção "Produtos" também é em parallax (`assets/js/parallax-secoes.js`, genérico: `data-paralaxe="v"` num elemento ou `data-paralaxe-colunas="v1,v2,v3"` num grupo): os nove produtos viram cartões em colunas que passam em velocidades diferentes (a do meio corre na frente) e o título fica um pouco para trás; a partir de 700 px, sem movimento reduzido nem `?fx=0` (no celular, uma coluna parada) |
+
+É o "Parallax" do Osmo (componente React com GSAP, ScrollTrigger e Lenis) refeito em JS vanilla, sem dependências: quatro camadas presas no hero descem em velocidades diferentes enquanto a página sobe (serras de Minas 70% da própria altura, a OneX no morro 55%, o texto 40%, as pedras da frente 10%), e com isso o texto afunda atrás das pedras. O Lenis (rolagem suavizada) ficou de fora: ele sequestra a rolagem nativa, e a rolagem nativa já deixa o efeito fluido. As camadas são fotos noturnas geradas no Higgsfield, em tons de cinza e com fundo transparente (`assets/img/parallax/1-serra`, `2-onex`, `4-frente.webp`), desenhadas em pontos por `assets/js/parallax.js` com a mesma receita da visita (rampa preto → laranja → branco, raio pela luz, contraste local e bloom). Cada camada vira um canvas 2D desenhado uma vez por tamanho de tela, e a rolagem só move os canvas (`transform`). O prédio fica sempre fora do texto: à direita da coluna na paisagem e no vão entre o cabeçalho e o texto no retrato (medido a cada tamanho de tela).
+
+Com movimento reduzido, os pontos aparecem mas nada se mexe. Sem JS, com `?fx=0` ou se o desenho falhar, aparece o pôster em pontos (`poster.webp`, `poster-retrato.webp`, capturas do próprio renderizador). Em `file://` as camadas vêm embutidas em `assets/js/parallax-camadas.js` (refeito por `qa/scripts/gera-camadas-js.ps1` depois de trocar as camadas). Estilos em `assets/css/parallax.css`.
+
+Testado (26/10/2026, Chromium headless) em 1920 × 950, 1440 × 900, 1366 × 657, 1280 × 600 a 125%, 1024 × 640, 768 × 1024, 390 × 844, 360 × 740, 320 × 568, 844 × 390 e 667 × 375: texto abaixo do cabeçalho, sem estouro lateral e sem erros de console; também com movimento reduzido, `?fx=0` e em `file://`. No 320 × 568 o prédio fica parcialmente atrás do título.
+
 ## Animações por seção
 
 | Seção | Animação | Gatilho |
@@ -109,7 +125,7 @@ Três passadas na GPU: (1) a grade, um texel por célula, amostra a cena da vez 
 | Hero (visita) | texto sobe em sequência; a rolagem atravessa fachada → corredor → rack → rede → storage → telefonia → X, em pontos que pulsam | carga / intro; rolagem |
 | Como funciona | nó numerado → título → linha laranja até o próximo nó, sobre um trilho fantasma; o nó 4 (laranja) solta um pulso | 35% na tela |
 | Produtos | cada ícone com movimento próprio: racks entram no gabinete, LEDs do servidor piscam, cursor do terminal pisca, linhas do site se escrevem, VMs saltam dentro do host, seta sobe na nuvem, aba do envelope fecha, ondas do VoIP, seta do backup dá a volta e o arquivo desce | 15% na tela; de novo ao passar o mouse |
-| Simulador | o valor troca como uma placa (sai para cima, entra de baixo, algarismos tabulares, sem contagem) e a barra da 1ª parcela se enche | mudar produto/plano |
+| Simulador | o valor troca num cruzamento suave (o antigo sobe pouco e esmaece, o novo assenta de baixo logo depois; algarismos tabulares, sem contagem) e a barra da 1ª parcela se enche | mudar produto/plano |
 | Por que a OneX | pino cai no lugar, fone se desenha e o microfone completa, camadas empilham, escudo e visto se desenham | 15% na tela; mouse |
 | Formulário | estados Enviar → "Abrindo WhatsApp…" → painel de sucesso com o visto desenhado; marca-d'água do X em traço | envio / 20% na tela |
 | FAQ | hover: fundo branco e o + gira 90°; aberta: cartão navy e o + laranja vira × (uma curva e uma duração) | mouse / clique |

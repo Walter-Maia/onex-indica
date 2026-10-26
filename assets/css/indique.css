@@ -302,7 +302,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .visita__fim { margin-top: var(--e8); padding-top: var(--e7); border-top: 1px solid var(--linha-preto); }
 .visita__fim-titulo { margin: 0; max-width: 20ch; font-size: var(--t-h2); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--branco); text-wrap: balance; }
 .visita__fim-titulo span { color: var(--laranja); }
-.visita__dica, .visita__progresso, .visita__pular { display: none; }
+.visita__dica, .visita__pular { display: none; }
 
 /* ---------- visita com rolagem (html.visita-on) ---------- */
 .visita-on .visita { --visita-trechos: 6.5; --visita-trecho: 88svh; height: calc(var(--visita-trechos) * var(--visita-trecho) + 100svh); margin: 0; border-radius: 0; background: none; overflow: visible; }
@@ -335,7 +335,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .visita-on .parada__cena { display: none; }
 /* celular em pé: a condição sai da abertura (o subtítulo já diz que a 1ª parcela é sua quando a empresa contrata) e a fachada ganha espaço */
 @media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .visita-on .hero__condicao { display: none; } }
-/* celular baixo (SE, 320 × 640): a abertura enxuga para caber entre o cabeçalho e o fio de progresso */
+/* celular baixo (SE, 320 × 640): a abertura enxuga para caber entre o cabeçalho e a base */
 @media (max-aspect-ratio: 9/10) and (max-height: 720px) {
   .visita-on .hero__olho, .visita-on .visita__abertura .visita__dica { display: none; }
   .visita-on .visita h1 { font-size: clamp(1.875rem, 1.2rem + 3.2vw, 2.25rem); }
@@ -397,13 +397,6 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .visita-on .visita__dica { display: flex; align-items: center; gap: 12px; margin: var(--e6) 0 0; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em; color: var(--sobre-preto-suave); animation: aparece 600ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 900ms); }
 .visita__dica span { width: 1.5px; height: 28px; border-radius: 2px; background: linear-gradient(var(--laranja), rgba(249, 104, 28, 0)); transform-origin: top; animation: dica 1.8s var(--ease-out) 4 both; animation-delay: calc(var(--rise-start, 0s) + 1200ms); }
 @keyframes dica { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
-/* progresso: trilho vertical à direita (paisagem) ou fio embaixo (retrato) */
-.visita-on .visita__progresso { display: block; position: absolute; left: var(--lateral); right: var(--lateral); bottom: calc(var(--e5) + env(safe-area-inset-bottom, 0px)); height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
-.visita__progresso span { display: block; width: 100%; height: 100%; background: var(--laranja); transform-origin: left; transform: scaleX(var(--p, 0)); }
-@media (min-aspect-ratio: 9/10) {
-  .visita-on .visita__progresso { left: auto; right: max(var(--lateral), (100% - var(--largura)) / 2 - var(--e6)); top: 50%; bottom: auto; width: 2px; height: 140px; margin-top: -70px; }
-  .visita__progresso span { transform-origin: top; transform: scaleY(var(--p, 0)); }
-}
 .visita-on a.visita__pular {
   display: inline-flex; align-items: center; gap: 6px; position: absolute; z-index: 2; right: max(var(--lateral), (100% - var(--largura)) / 2);
   top: calc(var(--altura-topo) + 2 * var(--caixa-margem) + var(--e3)); padding: var(--e2) var(--e1); border-radius: 8px;
@@ -839,7 +832,7 @@ html.intro-ativa::before { content: ""; position: fixed; inset: 0; z-index: 900;
 .fx-0 *, .fx-0 *::before, .fx-0 *::after { animation: none !important; transition: none !important; }
 
 @media print {
-  .topo, .cta-fixo, .visita__arte, .visita__pular, .visita__progresso, .marca-dagua { display: none !important; }
+  .topo, .cta-fixo, .visita__arte, .visita__pular, .marca-dagua { display: none !important; }
   .visita { background: none; color: var(--cinza); }
   .caixa { border-radius: 0; }
 }

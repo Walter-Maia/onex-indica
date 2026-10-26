@@ -1,0 +1,157 @@
+/* ==========================================================================
+   HERO EM PARALLAX (index-parallax.html e index-parallax-visita.html)
+   O "Parallax" do Osmo com as camadas em pontos (assets/js/parallax.js): serras de Minas, a OneX no morro, o texto e
+   as pedras da frente, empilhados nessa ordem. Ao rolar, cada camada desce numa velocidade e o texto afunda atrás das
+   pedras. Base (sem JS, ?fx=0 ou se o desenho falhar): caixa preta com o pôster em pontos atrás do texto.
+   html.parallax-on: os canvas entram por cima do pôster quando as três camadas estão prontas.
+   ========================================================================== */
+.parallax {
+  position: relative; margin: var(--caixa-margem) var(--caixa-margem) 0; border-radius: var(--caixa-raio);
+  background: var(--preto-fundo); color: var(--sobre-preto); overflow: hidden; overflow: clip; isolation: isolate;
+}
+.parallax h1, .parallax strong { color: var(--branco); }
+.parallax :focus-visible { outline-color: var(--branco); }
+.parallax__moldura { position: absolute; inset: 0; border-radius: var(--caixa-raio); pointer-events: none; }
+
+/* camadas: passam 17,5% acima do hero (ao descer, o topo delas não aparece) */
+.parallax__poster, .parallax__camada { position: absolute; left: 0; width: 100%; max-width: none; pointer-events: none; }
+.parallax__poster { top: 0; height: 100%; object-fit: cover; object-position: 66% 50%; z-index: 0; }
+.parallax__camada { display: none; top: -17.5%; height: 117.5%; will-change: transform; }
+.parallax-on .parallax__camada { display: block; opacity: 0; transition: opacity 700ms var(--ease-out); }
+.parallax-on .parallax.pronto .parallax__camada { opacity: 1; }
+.parallax-on .parallax.pronto .parallax__poster { opacity: 0; transition: opacity 700ms var(--ease-out); }
+.parallax__camada[data-camada="serra"] { z-index: 0; }
+.parallax__camada[data-camada="onex"] { z-index: 1; }
+.parallax__camada[data-camada="frente"] { z-index: 4; }
+
+/* véu que segura o texto (embaixo no retrato, à esquerda na paisagem) e o fim que esfuma no preto */
+.parallax__veu { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(0deg, rgba(10, 9, 9, 0.92) 0%, rgba(10, 9, 9, 0.8) 34%, rgba(10, 9, 9, 0) 62%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+@media (min-aspect-ratio: 9/10) {
+  .parallax__veu { background: linear-gradient(90deg, rgba(10, 9, 9, 0.9) 0%, rgba(10, 9, 9, 0.66) 30%, rgba(10, 9, 9, 0) 56%), radial-gradient(110% 100% at 66% 50%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+}
+.parallax__esfuma { position: absolute; left: 0; right: 0; bottom: 0; height: 10%; z-index: 5; pointer-events: none; background: linear-gradient(rgba(10, 9, 9, 0), var(--preto-fundo) 85%); }
+
+/* texto: a camada do meio (desce 40%), por cima do véu e por baixo das pedras */
+.parallax__texto {
+  position: relative; z-index: 3; min-height: calc(100svh - var(--caixa-margem)); display: flex; flex-direction: column; justify-content: flex-end;
+  padding: calc(var(--altura-topo) + var(--e7)) max(var(--lateral), (100% - var(--largura)) / 2) max(var(--e7), 11svh);
+}
+@media (min-aspect-ratio: 9/10) { .parallax__texto { justify-content: center; padding-bottom: max(var(--e7), 10svh); } }
+.parallax__texto > * { max-width: 38rem; }
+.parallax-on .parallax__texto { will-change: transform; }
+.parallax h1 { font-weight: 800; font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.03em; }
+.parallax .h1__b { color: var(--laranja); }
+.parallax__texto .hero__acoes { animation: sobe 800ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 480ms); }
+.parallax__dica { display: flex; align-items: center; gap: 12px; margin: var(--e6) 0 0; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em; color: var(--sobre-preto-suave); animation: aparece 600ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 900ms); }
+.parallax__dica span { width: 1.5px; height: 28px; border-radius: 2px; background: linear-gradient(var(--laranja), rgba(249, 104, 28, 0)); transform-origin: top; animation: dica 1.8s var(--ease-out) 4 both; animation-delay: calc(var(--rise-start, 0s) + 1200ms); }
+
+/* paisagem: o título acompanha a altura da tela (notebooks baixos) */
+@media (min-aspect-ratio: 9/10) {
+  .parallax h1 { font-size: min(var(--t-h1), 7.2vh); font-size: min(var(--t-h1), 7.2svh); }
+}
+/* celular em pé: a condição e a dica saem (o subtítulo já diz que a 1ª parcela é sua quando a empresa contrata) e a OneX ganha espaço acima do texto */
+@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .parallax .hero__condicao, .parallax__dica { display: none; } }
+/* celulares de até 760 px de altura (SE, Galaxy de 360 × 740): o título encolhe e o olho sai, para a OneX caber entre o
+   cabeçalho e o texto; notebooks baixos: tudo mais junto */
+@media (max-aspect-ratio: 9/10) and (max-height: 760px) {
+  .parallax .hero__olho, .parallax__dica { display: none; }
+  .parallax h1 { font-size: clamp(1.875rem, 1.2rem + 3.2vw, 2.25rem); }
+  .parallax .hero__sub { margin-top: var(--e4); font-size: 0.9375rem; line-height: 1.5; }
+  .parallax__texto .hero__acoes { margin-top: var(--e5); gap: var(--e2); }
+}
+@media (min-aspect-ratio: 9/10) and (max-height: 820px) {
+  .parallax__texto { padding-top: calc(var(--altura-topo) + var(--e6)); }
+  .parallax .hero__olho { margin-bottom: var(--e3); }
+  .parallax .hero__sub { margin-top: var(--e4); font-size: 1.0625rem; line-height: 1.5; }
+  .parallax .hero__condicao { display: none; }
+  .parallax__texto .hero__acoes { margin-top: var(--e5); }
+  .parallax__dica { margin-top: var(--e5); }
+}
+@media (min-aspect-ratio: 9/10) and (max-height: 640px) { .parallax__dica { display: none; } }
+@media (min-aspect-ratio: 9/10) and (max-height: 520px) {
+  .parallax__texto { padding-top: calc(var(--altura-topo) + var(--e3)); padding-bottom: var(--e6); }
+  .parallax__texto > * { max-width: min(34rem, 56vw); }
+  .parallax h1 { font-size: min(var(--t-h1), 6.6vh); font-size: min(var(--t-h1), 6.6svh); }
+  .parallax .hero__olho { margin-bottom: var(--e2); font-size: 0.75rem; }
+  .parallax .hero__sub { margin-top: var(--e3); font-size: 0.875rem; line-height: 1.45; }
+  .parallax__texto .hero__acoes { margin-top: var(--e4); gap: var(--e2); }
+  .parallax__texto .botao { min-height: 44px; padding-block: var(--e2); font-size: 0.9375rem; }
+}
+
+/* versão com a visita depois do parallax: a abertura da visita vira um convite curto (o título da página fica no parallax) */
+.visita__chamada { margin: 0; font-weight: 800; font-size: var(--t-h2); line-height: 1.08; letter-spacing: -0.03em; color: var(--branco); text-wrap: balance; }
+.visita__chamada span { color: var(--laranja); }
+.visita-on .visita__chamada { font-size: min(var(--t-h2), 6svh); }
+
+/* ==========================================================================
+   VERSÃO IMERSIVA (index-parallax-visita.html): parallax em tela cheia, cabeçalho só com a marca e a visita emendada
+   no parallax (data-visita-continua: entra em tela cheia, sem a caixa) com os textos espalhados pela tela
+   (data-visita-espalha: cada pedaço sobe na sua velocidade, data-vel, em assets/js/visita.js)
+   ========================================================================== */
+/* cabeçalho: só a OneX, sem a barra que aparece ao rolar (o logo continua trocando de tom sobre o papel) */
+.topo--so-marca .topo__barra { pointer-events: none; background: none !important; border-color: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.topo--so-marca .topo__marca { pointer-events: auto; }
+
+.parallax--tela { margin: 0; border-radius: 0; }
+.parallax--tela .parallax__moldura { border-radius: 0; }
+.parallax--tela .parallax__texto { min-height: 100svh; }
+
+/* textos espalhados (paisagem): cada parada ocupa a tela inteira; nas ímpares, o rótulo e o título ficam no alto à
+   esquerda, os itens embaixo à direita e o ganho embaixo à esquerda; nas pares, espelhado. A cena fica no meio */
+.visita--espalhada .visita__coluna { text-shadow: 0 1px 2px rgba(10, 9, 9, 0.6), 0 0 24px rgba(10, 9, 9, 0.85); }
+.visita--espalhada [data-vel] { will-change: transform; }
+@media (min-aspect-ratio: 9/10) {
+  .visita-on .visita--espalhada .visita__arte::after { background: radial-gradient(78% 72% at 50% 54%, rgba(10, 9, 9, 0) 36%, rgba(10, 9, 9, 0.84) 100%), linear-gradient(0deg, rgba(10, 9, 9, 0.7) 0%, rgba(10, 9, 9, 0) 30%), linear-gradient(180deg, rgba(10, 9, 9, 0.6) 0%, rgba(10, 9, 9, 0) 28%); }
+  .visita-on .visita--espalhada .visita__coluna, .visita-on .visita--espalhada .visita__paradas { align-items: stretch; }
+  .visita-on .visita--espalhada .visita__abertura, .visita-on .visita--espalhada .parada, .visita-on .visita--espalhada .visita__fim {
+    max-width: none; display: grid; align-content: stretch; gap: var(--e3) var(--e8);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  }
+  .visita-on .visita--espalhada .parada__titulo { font-size: min(clamp(2rem, 1.2rem + 2.6vw, 3.5rem), 7svh); }
+  .visita--espalhada .parada .indice { grid-area: 1 / 1; }
+  .visita--espalhada .parada__titulo { grid-area: 2 / 1; max-width: 14ch; text-wrap: balance; }
+  .visita--espalhada .parada__itens { grid-area: 4 / 2 / 6 / 3; align-self: end; justify-self: end; width: min(100%, 26rem); }
+  .visita--espalhada .parada__ganho { grid-area: 5 / 1; align-self: end; max-width: 24rem; }
+  .visita--espalhada .parada:nth-child(even) .indice { grid-area: 1 / 2; justify-self: end; }
+  .visita--espalhada .parada:nth-child(even) .parada__titulo { grid-area: 2 / 2; justify-self: end; text-align: right; }
+  .visita--espalhada .parada:nth-child(even) .parada__itens { grid-area: 4 / 1 / 6 / 2; justify-self: start; }
+  .visita--espalhada .parada:nth-child(even) .parada__ganho { grid-area: 5 / 2; justify-self: end; text-align: right; }
+  /* abertura e fim: o título no alto à esquerda, o resto embaixo */
+  .visita--espalhada .visita__abertura .hero__olho { grid-area: 1 / 1; margin: 0; }
+  .visita--espalhada .visita__chamada { grid-area: 2 / 1; max-width: 16ch; font-size: min(clamp(2rem, 1.2rem + 2.6vw, 3.5rem), 7svh); }
+  .visita--espalhada .visita__abertura .hero__sub { grid-area: 5 / 2; align-self: end; justify-self: end; max-width: 24rem; margin: 0; }
+  .visita--espalhada .visita__abertura .visita__dica { grid-area: 5 / 1; align-self: end; margin: 0; }
+  .visita--espalhada .visita__fim-titulo { grid-area: 2 / 1; max-width: 18ch; }
+  .visita--espalhada .visita__fim .hero__acoes { grid-area: 5 / 2; align-self: end; justify-self: end; margin: 0; }
+}
+/* "Pular a visita" sobe para a linha do cabeçalho, à direita (sem os links, o canto fica livre) */
+.visita-on .visita--espalhada a.visita__pular { top: calc(env(safe-area-inset-top, 0px) + var(--caixa-margem) + (var(--altura-topo) - 32px) / 2); bottom: auto; }
+
+.fx-0 .parallax__camada { display: none; }
+@media print {
+  .parallax__poster, .parallax__camada, .parallax__veu, .parallax__esfuma { display: none !important; }
+  .parallax { background: none; color: var(--cinza); }
+}
+
+/* ==========================================================================
+   PRODUTOS EM PARALLAX (index-parallax-visita.html, assets/js/parallax-secoes.js): os nove produtos viram cartões em
+   colunas que passam em velocidades diferentes (a do meio corre na frente, as dos lados ficam para trás) e o título
+   fica um pouco para trás. No celular, uma coluna parada.
+   ========================================================================== */
+.secao--paralaxe { position: relative; isolation: isolate; overflow: hidden; overflow: clip; }
+.produtos--cartoes { border-top: 0; gap: var(--e5); }
+.produtos--cartoes .produto {
+  display: flex; flex-direction: column; padding: var(--e6); border: 1px solid var(--linha); border-radius: calc(var(--caixa-raio) * 0.6);
+  background: var(--papel); box-shadow: 0 1px 0 rgba(17, 16, 16, 0.02), 0 18px 40px -24px rgba(17, 16, 16, 0.18);
+  transition: border-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+}
+.produtos--cartoes .produto .ico { margin-bottom: var(--e5); background: var(--branco); }
+.produtos--cartoes .produto .produto__ganho { margin-top: auto; padding-top: var(--e5); }
+.produtos--cartoes .produto .produto__ganho::before { content: ""; display: block; height: 1px; margin-bottom: var(--e4); background: var(--linha); }
+@media (hover: hover) and (pointer: fine) { .produtos--cartoes .produto:hover { border-color: rgba(249, 104, 28, 0.45); box-shadow: 0 24px 48px -24px rgba(249, 104, 28, 0.35); } }
+/* as colunas mudam de velocidade: o vão entre as linhas dá folga para elas se aproximarem sem encostar */
+@media (min-width: 700px) {
+  .produtos--cartoes { row-gap: var(--e8); column-gap: var(--e5); }
+  .produtos--cartoes .produto { will-change: transform; }
+  .secao--paralaxe .produtos--cartoes { padding-block: var(--e7); }
+}
