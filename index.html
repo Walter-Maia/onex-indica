@@ -32,11 +32,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..800&amp;display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..800&amp;display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/indique.css">
+<link rel="stylesheet" href="assets/css/parallax.css">
 <!-- Intro: decidida antes da primeira pintura. Não roda com #âncora, aba oculta, página já rolada, movimento reduzido
      ou se já foi vista nesta sessão. ?intro=1 força (revisão), ?intro=0 pula e ?fx=0 entrega a composição estática. -->
-<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!rm&&"IntersectionObserver"in window&&"WebGLRenderingContext"in window)d.classList.add("visita-on");if(/[?&]intro=0\b/.test(q)||rm)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement;d.classList.add("js");try{var q=location.search;if(/[?&]fx=0\b/.test(q)){d.classList.add("fx-0");return}d.classList.add("parallax-on");var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!rm&&"IntersectionObserver"in window&&"WebGLRenderingContext"in window)d.classList.add("visita-on");if(/[?&]intro=0\b/.test(q)||rm)return;if(!/[?&]intro=1\b/.test(q)&&(location.hash||document.hidden||window.pageYOffset>4||sessionStorage.getItem("onex-indique-intro")==="1"))return;d.classList.add("intro-ativa")}catch(e){}})();</script>
 <script src="assets/js/intro.js" defer onerror="document.documentElement.classList.remove('intro-ativa')"></script>
 <script src="assets/js/indique.js" defer></script>
+<script src="assets/js/parallax.js" defer onerror="document.documentElement.classList.remove('parallax-on')"></script>
+<script src="assets/js/parallax-secoes.js" defer></script>
 <script src="assets/js/visita.js" defer onerror="document.documentElement.classList.remove('visita-on')"></script>
 <script type="application/ld+json">
 {
@@ -138,7 +141,8 @@
 <!-- Cabeçalho flutuante: transparente sobre o hero; depois da rolagem vira uma barra arredondada no tom do que passa por
      baixo. O logo é o oficial, recortado em duas partes (nome e X) só para entrar em partes depois da intro; o X fica
      sempre laranja (o do logo oficial), nos dois tons. -->
-<header class="topo" data-topo data-tom="escuro">
+<!-- O cabeçalho é só a marca da OneX, no meio da tela (sem links, botão nem barra) -->
+<header class="topo topo--so-marca" data-topo data-tom="escuro">
   <div class="topo__barra">
     <a class="topo__marca" href="#topo" aria-label="OneX Data Center, voltar ao início">
       <span class="logo" aria-hidden="true">
@@ -146,126 +150,99 @@
         <span class="logo__parte logo__parte--x"><img class="logo__img logo__img--cinza" src="assets/img/logo-onex-cinza.webp" alt="" width="866" height="250"></span>
       </span>
     </a>
-    <nav class="topo__nav" id="menu" aria-label="Seções da página" data-menu-painel>
-      <ul class="topo__links">
-        <li style="--i:0"><a href="#como-funciona">Como funciona</a></li>
-        <li style="--i:1"><a href="#produtos">Produtos</a></li>
-        <li style="--i:2"><a href="#simulador">Simular</a></li>
-        <li style="--i:3"><a href="#perguntas">Perguntas</a></li>
-        <li class="topo__links-cta" style="--i:4"><a class="botao" href="#indicar">Quero indicar</a></li>
-      </ul>
-    </nav>
-    <a class="botao botao--topo" href="#indicar">Quero indicar</a>
-    <button class="topo__menu" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu" data-menu>
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="topo__menu-a" d="M4 8h16"/><path class="topo__menu-b" d="M4 16h16"/></svg>
-    </button>
   </div>
 </header>
 
 <main id="conteudo" tabindex="-1">
   <span id="topo" class="ancora-topo"></span>
 
-  <!-- ===================== HERO: VISITA À ONEX ===================== -->
-  <!-- A rolagem leva a pessoa para dentro da OneX: fachada → corredor → rack → rede → storage → telefonia → o X. Cada
-       parada mostra produtos que dá para indicar. As cenas são fotos ilustrativas geradas no Higgsfield, desenhadas em
-       pontos por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em WebGL).
+  <!-- ===================== HERO: PARALLAX ===================== -->
+  <!-- O "Parallax" do Osmo em pontos: as serras de Minas, a OneX no morro, o texto e as pedras da frente descem em
+       velocidades diferentes ao rolar (assets/js/parallax.js; camadas geradas no Higgsfield, desenhadas com a mesma
+       receita de pontos da visita). Sem JS ou com ?fx=0: o pôster em pontos atrás do texto. -->
+  <section class="parallax parallax--tela" id="inicio" aria-labelledby="titulo" data-parallax data-escuro>
+    <div class="parallax__moldura" aria-hidden="true" data-hero></div>
+    <picture>
+      <source media="(max-aspect-ratio: 9/10)" srcset="assets/img/parallax/poster-retrato.webp" width="780" height="1688">
+      <img class="parallax__poster" src="assets/img/parallax/poster.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+    </picture>
+    <canvas class="parallax__camada" data-camada="serra" aria-hidden="true"></canvas>
+    <canvas class="parallax__camada" data-camada="onex" aria-hidden="true"></canvas>
+    <div class="parallax__veu" aria-hidden="true"></div>
+    <div class="parallax__texto" data-camada="texto">
+      <h1 id="titulo"><span class="h1__a">Indique a OneX e receba</span> <span class="h1__b">100% da primeira parcela</span></h1>
+      <p class="hero__condicao"><strong>Comissão de 100% sobre a 1ª parcela</strong> do produto indicado, quando a empresa indicada contrata.</p>
+      <div class="hero__acoes">
+        <a class="botao" href="#indicar" data-cta-hero>Quero indicar</a>
+        <a class="botao botao--contorno" href="#simulador">Simular minha comissão</a>
+      </div>
+    </div>
+    <canvas class="parallax__camada" data-camada="frente" aria-hidden="true"></canvas>
+    <div class="parallax__esfuma" aria-hidden="true"></div>
+    <!-- "role para baixo": um mouse em pixels (1 unidade = 1 pixel) com a rodinha descendo, no meio da base -->
+    <svg class="parallax__mouse" viewBox="0 0 9 18" aria-hidden="true" focusable="false">
+      <path class="parallax__mouse-corpo" d="M2 0h5v1H2zM1 1h1v1H1zM7 1h1v1H7zM0 2h1v10H0zM8 2h1v10H8zM1 12h1v1H1zM7 12h1v1H7zM2 13h5v1H2z"/>
+      <rect class="parallax__mouse-roda" x="4" y="3" width="1" height="2"/>
+      <path class="parallax__mouse-seta" d="M3 15h1v1H3zM5 15h1v1H5zM4 16h1v1H4z"/>
+    </svg>
+  </section>
+
+  <!-- ===================== VISITA À ONEX (depois do parallax) ===================== -->
+  <!-- A rolagem leva a pessoa para dentro da OneX: fachada → corredor → rack (data-visita-cenas="0,1,2"). Cada parada
+       mostra produtos que dá para indicar. As cenas são fotos ilustrativas geradas no Higgsfield, desenhadas em pontos
+       por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em WebGL).
+       No rack, os servidores vêm para perto e o cartão laranja de "Como funciona" sobe por cima do palco
+       (data-visita-sobe; o palco vira caixa enquanto isso). Rede, storage e telefonia ficam nos cartões de "Produtos".
        Sem JS, com movimento reduzido ou ?fx=0: a fachada em pontos (imagem) fica atrás do texto e as paradas viram
        cartões, cada um com a sua cena em pontos. -->
-  <section class="visita" id="visita" aria-labelledby="titulo" data-visita data-escuro>
+  <section class="visita visita--espalhada visita--sobe" id="visita" style="--visita-trechos: 3.1364" aria-labelledby="h-visita" data-visita data-visita-continua data-visita-espalha data-visita-cenas="0,1,2" data-visita-sobe data-escuro>
     <div class="visita__palco" data-visita-palco>
-      <div class="visita__moldura" aria-hidden="true" data-hero></div>
+      <div class="visita__moldura" aria-hidden="true"></div>
       <div class="visita__arte" aria-hidden="true" data-visita-arte>
         <picture>
           <source media="(max-aspect-ratio: 9/10)" srcset="assets/img/visita/pontos-0-retrato.webp" width="780" height="1688">
-          <img class="visita__poster" src="assets/img/visita/pontos-0.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+          <img class="visita__poster" src="assets/img/visita/pontos-0.webp" alt="" width="1600" height="900" loading="lazy" decoding="async">
         </picture>
         <canvas class="visita__tela" data-visita-tela></canvas>
       </div>
 
       <div class="visita__coluna">
         <div class="visita__abertura" data-parada="0">
-          <p class="hero__olho"><svg class="mini-x" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false"><use href="#x-pecas"/></svg>Programa de indicação OneX Data Centers</p>
-          <h1 id="titulo"><span class="h1__a">Indique a OneX e receba</span> <span class="h1__b">100% da primeira parcela</span></h1>
-          <p class="hero__sub">Conhece uma empresa que precisa de colocation, nuvem, servidores, VoIP ou backup? Apresente a OneX. Quando ela contrata, o valor da 1ª parcela do produto que ela fechou é seu.</p>
-          <p class="hero__condicao"><strong>Comissão de 100% sobre a 1ª parcela</strong> do produto indicado, quando a empresa indicada contrata.</p>
-          <div class="hero__acoes">
-            <a class="botao" href="#indicar" data-cta-hero>Quero indicar</a>
-            <a class="botao botao--contorno" href="#simulador">Simular minha comissão</a>
-          </div>
-          <p class="visita__dica" aria-hidden="true"><span></span>Role para entrar na OneX</p>
+          <p class="hero__olho" data-vel="0.3"><svg class="mini-x" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false"><use href="#x-pecas"/></svg>Uma visita à OneX</p>
+          <h2 class="visita__chamada" data-vel="0.3" id="h-visita">Entre no data center e veja <span>o que dá para indicar</span></h2>
+          <p class="hero__sub" data-vel="0.12">Cada parada mostra produtos que a empresa indicada pode contratar e quanto você recebe quando ela fecha.</p>
+          <p class="visita__dica" aria-hidden="true" data-vel="0.22"><span></span>Role para entrar na OneX</p>
         </div>
-
-        <h2 class="so-leitor">Uma visita à OneX: o que você pode indicar</h2>
         <ol class="visita__paradas">
           <li class="parada" data-parada="1">
             <img class="parada__cena" src="assets/img/visita/pontos-1.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true"><span>01</span>O corredor</p>
-            <h3 class="parada__titulo">Colocation e área dedicada</h3>
-            <ul class="parada__itens">
+            <p class="indice" aria-hidden="true" data-vel="0.32"><span>01</span>O corredor</p>
+            <h3 class="parada__titulo" data-vel="0.32">Colocation e área dedicada</h3>
+            <ul class="parada__itens" data-vel="0.12">
               <li><strong>Colocation</strong> Os servidores da empresa hospedados no data center da OneX, em Minas Gerais.</li>
               <li><strong>Área dedicada</strong> Um espaço só da empresa dentro do data center.</li>
             </ul>
-            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
+            <p class="parada__ganho" data-vel="0.26">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
           </li>
           <li class="parada" data-parada="2">
             <img class="parada__cena" src="assets/img/visita/pontos-2.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true"><span>02</span>O rack</p>
-            <h3 class="parada__titulo">Servidores, VPS e virtualização</h3>
-            <ul class="parada__itens">
+            <p class="indice" aria-hidden="true" data-vel="0.32"><span>02</span>O rack</p>
+            <h3 class="parada__titulo" data-vel="0.32">Servidores, VPS e virtualização</h3>
+            <ul class="parada__itens" data-vel="0.12">
               <li><strong>Servidores dedicados</strong> Máquinas exclusivas para quem precisa de desempenho e controle.</li>
               <li><strong>VPS Linux</strong> 4 GB de RAM, 2 vCPU e 120 GB, em contrato de 12 meses.</li>
               <li><strong>Virtualização</strong> Vários ambientes virtuais na mesma infraestrutura, cada um isolado.</li>
             </ul>
-            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
-          </li>
-          <li class="parada" data-parada="3">
-            <img class="parada__cena" src="assets/img/visita/pontos-3.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true"><span>03</span>A rede</p>
-            <h3 class="parada__titulo">Nuvem, sites e e-mail</h3>
-            <ul class="parada__itens">
-              <li><strong>OnexCloud</strong> Armazenamento de 1 TB compartilhado, com backup incluso.</li>
-              <li><strong>Hospedagem de sites</strong> Plano Básico com 2 vCPU, 4 GB de RAM e 20 GB SSD por R$&nbsp;29,90 por mês.</li>
-              <li><strong>E-mail profissional</strong> Com o domínio da empresa, para a equipe inteira.</li>
-            </ul>
-            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(R$&nbsp;29,90 no Plano Básico de hospedagem)</span></p>
-          </li>
-          <li class="parada" data-parada="4">
-            <img class="parada__cena" src="assets/img/visita/pontos-4.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true"><span>04</span>O storage</p>
-            <h3 class="parada__titulo">Backup em nuvem</h3>
-            <ul class="parada__itens">
-              <li><strong>Backup em nuvem</strong> Cópias de segurança dos dados da empresa, guardadas na nuvem da OneX.</li>
-            </ul>
-            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
-          </li>
-          <li class="parada" data-parada="5">
-            <img class="parada__cena" src="assets/img/visita/pontos-5.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true"><span>05</span>A telefonia</p>
-            <h3 class="parada__titulo">Telefonia VoIP</h3>
-            <ul class="parada__itens">
-              <li><strong>Essencial</strong> R$&nbsp;99 por mês.</li>
-              <li><strong>Profissional</strong> R$&nbsp;199 por mês.</li>
-              <li><strong>Enterprise</strong> Sob consulta.</li>
-            </ul>
-            <p class="parada__ganho">Você recebe <strong>R$&nbsp;99 ou R$&nbsp;199</strong> <span>(Enterprise sob consulta)</span></p>
+            <p class="parada__ganho" data-vel="0.26">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
           </li>
         </ol>
-
-        <div class="visita__fim" data-parada="6">
-          <p class="visita__fim-titulo">Tudo isso você pode indicar. Quando a empresa contrata, <span>a 1ª parcela é sua.</span></p>
-          <div class="hero__acoes">
-            <a class="botao" href="#indicar">Quero indicar</a>
-            <a class="botao botao--contorno" href="#como-funciona">Ver como funciona</a>
-          </div>
-        </div>
       </div>
-
-      <a class="visita__pular" href="#como-funciona">Pular a visita<svg class="icone-inline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-seta"/></svg></a>
     </div>
   </section>
 
   <!-- ===================== COMO FUNCIONA ===================== -->
-  <section class="secao secao--aberta" id="como-funciona" aria-labelledby="h-como">
+  <!-- Cartão laranja que sobe por cima da visita (o fim dela); cada passo é um cartão com o ícone da etapa -->
+  <section class="caixa caixa--laranja secao como" id="como-funciona" aria-labelledby="h-como">
     <div class="editorial">
       <div class="editorial__titulo">
         <p class="indice" aria-hidden="true"><span>01</span>Como funciona</p>
@@ -277,22 +254,22 @@
     </div>
     <ol class="passos" data-passos>
       <li class="passo">
-        <span class="passo__no" aria-hidden="true">1</span><span class="passo__linha" aria-hidden="true"></span>
+        <span class="passo__no" aria-hidden="true"><svg class="passo__ico" viewBox="0 0 24 24" focusable="false"><path d="M20.5 3.5 10.75 13.25"/><path d="M20.5 3.5l-6.25 17-3.5-7.25L3.5 9.75z"/></svg></span>
         <h3 class="passo__titulo">Você indica</h3>
         <p>Envie pelo formulário os seus dados, o nome da empresa e o contato de quem decide a contratação.</p>
       </li>
       <li class="passo">
-        <span class="passo__no" aria-hidden="true">2</span><span class="passo__linha" aria-hidden="true"></span>
+        <span class="passo__no" aria-hidden="true"><svg class="passo__ico" viewBox="0 0 24 24" focusable="false"><path d="M4.5 4.5h10a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H9.5l-3.5 3v-3H4.5A1.5 1.5 0 0 1 3 12V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M16 8.5h3.5A1.5 1.5 0 0 1 21 10v6a1.5 1.5 0 0 1-1.5 1.5H18v3l-3.5-3h-4a1.5 1.5 0 0 1-1.5-1.5v-1"/></svg></span>
         <h3 class="passo__titulo">A OneX conversa com a empresa indicada</h3>
         <p>A equipe da OneX entra em contato, entende o que a empresa precisa e apresenta a proposta.</p>
       </li>
       <li class="passo">
-        <span class="passo__no" aria-hidden="true">3</span><span class="passo__linha" aria-hidden="true"></span>
+        <span class="passo__no" aria-hidden="true"><svg class="passo__ico" viewBox="0 0 24 24" focusable="false"><path d="M13.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8.5z"/><path d="M13.5 3v5.5H19"/><path d="M8.75 14.25l2.25 2.25 4.25-4.5"/></svg></span>
         <h3 class="passo__titulo">A empresa contrata</h3>
         <p>A comissão vale quando a empresa indicada fecha contrato de um produto da OneX.</p>
       </li>
       <li class="passo passo--comissao">
-        <span class="passo__no" aria-hidden="true">4</span>
+        <span class="passo__no" aria-hidden="true"><svg class="passo__ico" viewBox="0 0 24 24" focusable="false"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.75"/><path d="M6.25 9.75v4.5M17.75 9.75v4.5"/></svg></span>
         <h3 class="passo__titulo">Você recebe 100% da 1ª parcela</h3>
         <p>O valor da sua comissão é igual à primeira parcela do produto que a empresa contratou.</p>
       </li>
@@ -300,8 +277,8 @@
   </section>
 
   <!-- ===================== PRODUTOS ===================== -->
-  <section class="caixa caixa--branca secao" id="produtos" aria-labelledby="h-produtos">
-    <div class="editorial">
+  <section class="caixa caixa--branca secao secao--paralaxe" id="produtos" aria-labelledby="h-produtos">
+    <div class="editorial" data-paralaxe="0.05">
       <div class="editorial__titulo">
         <p class="indice" aria-hidden="true"><span>02</span>Produtos</p>
         <h2 id="h-produtos" data-revela>O que você pode indicar</h2>
@@ -312,7 +289,7 @@
       </div>
     </div>
 
-    <ul class="produtos" data-produtos>
+    <ul class="produtos produtos--cartoes" data-produtos data-paralaxe-colunas="0.07,-0.1,0.07">
       <li class="produto">
         <svg class="ico ico--rack" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path class="t" pathLength="1" d="M7 2.75h10c.97 0 1.75.78 1.75 1.75v15c0 .97-.78 1.75-1.75 1.75H7c-.97 0-1.75-.78-1.75-1.75v-15c0-.97.78-1.75 1.75-1.75z"/>
@@ -517,7 +494,8 @@
 
   <!-- ===================== FORMULÁRIO ===================== -->
   <section class="caixa caixa--navy secao" id="indicar" aria-labelledby="h-indicar" data-escuro>
-    <svg class="marca-dagua marca-dagua--indicar" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false" data-desenha><use href="#x-pecas"/></svg>
+    <!-- nesta versão o X fica desenhado o tempo todo (sem data-desenha, não se apaga nem redesenha ao rolar) -->
+    <svg class="marca-dagua marca-dagua--indicar" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false"><use href="#x-pecas"/></svg>
     <div class="indicar">
       <div class="indicar__texto">
         <p class="indice" aria-hidden="true"><span>05</span>Indicação</p>
@@ -666,19 +644,6 @@
           <summary>Onde ficam os data centers da OneX?</summary>
           <div class="faq__resposta"><p>Em Minas Gerais, em Ipatinga e em Belo Horizonte. A empresa indicada pode agendar uma visita para conhecer a estrutura.</p></div>
         </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FECHAMENTO + RODAPÉ ===================== -->
-  <section class="caixa caixa--navy fechamento" id="fechamento" aria-labelledby="h-fechamento" data-escuro>
-    <svg class="marca-dagua marca-dagua--fechamento" viewBox="-4 -4 550 466" aria-hidden="true" focusable="false" data-desenha><use href="#x-pecas"/></svg>
-    <div class="fechamento__cta">
-      <h2 id="h-fechamento" data-revela>Conhece uma empresa que precisa de infraestrutura?</h2>
-      <p>Indique a OneX. Quando ela contrata, a primeira parcela é sua.</p>
-      <div class="fechamento__acoes">
-        <a class="botao" href="#indicar">Quero indicar</a>
-        <a class="botao botao--contorno" href="https://wa.me/553140404888?text=Ol%C3%A1%2C%20OneX!%20Quero%20saber%20mais%20sobre%20o%20programa%20Indique%20a%20OneX." target="_blank" rel="noopener"><svg class="icone-inline" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg>Falar no WhatsApp</a>
       </div>
     </div>
   </section>

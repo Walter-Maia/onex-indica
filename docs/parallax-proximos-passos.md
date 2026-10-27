@@ -4,6 +4,10 @@
 > [parallax.md](parallax.md), "Rede, storage e telefonia num momento só". A rolagem caiu um quarto, não pela metade:
 > corredor, rack e o fim ficaram no ritmo de antes e somam 3,5 dos 4,85 trechos.
 
+> Para comparar (27/10/2026, hoje em `backup/`): a opção 3 está em `index-visita-lateral.html` (`data-visita-lateral` em `visita.js`) e a
+> opção 4 em `index-visita-curta.html` (`data-visita-cenas="0,1,2,6"`), as duas a partir da versão B. Depois de
+> escolher, apagar as páginas que saem (e, se a lateral sair, a opção `data-visita-lateral` em `visita.js`).
+
 Problema (versão B, `index-parallax-visita.html`): a visita tem 6,5 trechos de 88svh, quase 6 telas de rolagem, e
 cada parada pede o mesmo esforço. Da 3ª parada em diante (rede, storage, telefonia) a pessoa já entendeu a mecânica e
 a novidade acaba. Esses produtos ainda se repetem logo depois, na seção "Produtos".

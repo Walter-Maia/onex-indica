@@ -3,5 +3,6 @@
 # copie as linhas abaixo para o robots.txt da raiz de onexdc.com.br (ver README).
 User-agent: *
 Allow: /
+Disallow: /backup/
 
 Sitemap: https://onexdc.com.br/indique/sitemap.xml

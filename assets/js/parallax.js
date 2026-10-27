@@ -18,6 +18,7 @@
 
   var texto = secao.querySelector('[data-camada="texto"]');
   var tela = secao.classList.contains('parallax--tela');
+  var mouse = secao.querySelector('.parallax__mouse');
   var desliga = function () { raiz.classList.remove('parallax-on'); };
   var parado = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -208,6 +209,8 @@
     texto.style.transform = p ? 'translate3d(0,' + (p * TEXTO * H).toFixed(1) + 'px,0)' : '';
     // em tela cheia (sem a barra do cabeçalho), o texto apaga enquanto sai, em vez de passar por baixo da marca
     if (tela) { var f = Math.min(1, Math.max(0, (p - 0.1) / 0.32)); texto.style.opacity = f ? (1 - f * f * (3 - 2 * f)).toFixed(3) : ''; }
+    // o mouse de "role para baixo" sai logo no começo da rolagem
+    if (mouse) mouse.style.opacity = p ? Math.max(0, 1 - p / 0.08).toFixed(3) : '';
   };
   var pede = function () { if (!raf && naTela) raf = requestAnimationFrame(move); };
 

@@ -334,7 +334,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .visita-on .visita__fim { margin: 0; padding: 0; border: 0; max-width: 30rem; }
 .visita-on .parada__cena { display: none; }
 /* celular em pé: a condição sai da abertura (o subtítulo já diz que a 1ª parcela é sua quando a empresa contrata) e a fachada ganha espaço */
-@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .visita-on .hero__condicao { display: none; } }
+@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .visita-on .visita .hero__condicao { display: none; } }
 /* celular baixo (SE, 320 × 640): a abertura enxuga para caber entre o cabeçalho e a base */
 @media (max-aspect-ratio: 9/10) and (max-height: 720px) {
   .visita-on .hero__olho, .visita-on .visita__abertura .visita__dica { display: none; }
@@ -360,7 +360,7 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
   .visita-on .visita__coluna { padding-top: calc(var(--altura-topo) + var(--caixa-margem) + var(--e5)); padding-bottom: var(--e6); }
   .visita-on .hero__olho { margin-bottom: var(--e3); }
   .visita-on .hero__sub { margin-top: var(--e4); font-size: 1.0625rem; line-height: 1.5; }
-  .visita-on .hero__condicao { display: none; }
+  .visita-on .visita .hero__condicao { display: none; }
   .visita-on .visita__abertura .hero__acoes { margin-top: var(--e5); }
   .visita-on .visita__abertura .visita__dica { margin-top: var(--e5); }
   .visita-on .parada__titulo { font-size: min(clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem), 5.2vh); font-size: min(clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem), 5.2svh); }
@@ -645,32 +645,29 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .sucesso:not([hidden]) { animation: valor-aparece 320ms var(--ease-out) both; }
 
 /* ==========================================================================
-   FAQ: details/summary nativo; uma duração e uma curva, sem sombra e sem mola.
-   hover = fundo branco, aro do + laranja e giro de 90°; aberta = cartão navy, + laranja vira ×.
+   FAQ: details/summary nativo; uma duração e uma curva, sem sombra e sem mola. Cada pergunta é um cartão, com um vão
+   entre eles: fechada = branco com fio; hover = fio e aro do + laranja e giro de 90°; aberta = cartão navy, + laranja vira ×.
    ========================================================================== */
-.faq { --faq-t: 320ms; --faq-ease: cubic-bezier(0.22, 1, 0.36, 1); display: grid; border-top: 1px solid var(--linha-forte); }
-.faq details { --mais: var(--tinta); --aro: var(--linha-forte); position: relative; border-radius: 16px; transition: background-color var(--faq-t) var(--faq-ease), --mais var(--faq-t) var(--faq-ease), --aro var(--faq-t) var(--faq-ease); }
-.faq details::after { content: ""; position: absolute; left: var(--e4); right: var(--e4); bottom: 0; height: 1px; background: var(--linha); pointer-events: none; transition: opacity var(--faq-t) var(--faq-ease); }
-.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--e4); padding: var(--e5) var(--e4); border-radius: 16px; font-weight: 700; font-size: 1.0625rem; line-height: 1.35; color: var(--tinta); min-height: 48px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: color var(--faq-t) var(--faq-ease); }
+.faq { --faq-t: 320ms; --faq-ease: cubic-bezier(0.22, 1, 0.36, 1); display: grid; gap: var(--e3); }
+.faq details { --mais: var(--tinta); --aro: var(--linha-forte); position: relative; border-radius: 16px; background-color: var(--branco); box-shadow: inset 0 0 0 1px var(--linha); transition: background-color var(--faq-t) var(--faq-ease), box-shadow var(--faq-t) var(--faq-ease), --mais var(--faq-t) var(--faq-ease), --aro var(--faq-t) var(--faq-ease); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--e4); padding: var(--e4); border-radius: 16px; font-weight: 700; font-size: 1rem; line-height: 1.35; color: var(--tinta); min-height: 48px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: color var(--faq-t) var(--faq-ease); }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: ""; flex: 0 0 34px; height: 34px; border-radius: 50%; background: linear-gradient(var(--mais), var(--mais)) center / 12px 1.5px no-repeat, linear-gradient(var(--mais), var(--mais)) center / 1.5px 12px no-repeat; background-color: transparent; box-shadow: inset 0 0 0 1px var(--aro); transition: transform var(--faq-t) var(--faq-ease), background-color var(--faq-t) var(--faq-ease); }
+.faq summary::after { content: ""; flex: 0 0 32px; height: 32px; border-radius: 50%; background: linear-gradient(var(--mais), var(--mais)) center / 12px 1.5px no-repeat, linear-gradient(var(--mais), var(--mais)) center / 1.5px 12px no-repeat; background-color: transparent; box-shadow: inset 0 0 0 1px var(--aro); transition: transform var(--faq-t) var(--faq-ease), background-color var(--faq-t) var(--faq-ease); }
 @media (hover: hover) and (pointer: fine) {
-  .faq details:not([open]):hover { --aro: var(--laranja); background-color: var(--branco); }
-  .faq details:not([open]):hover::after, .faq details:has(+ details:not([open]):hover)::after { opacity: 0; }
+  .faq details:not([open]):hover { --aro: var(--laranja); box-shadow: inset 0 0 0 1px rgba(249, 104, 28, 0.45); }
   .faq details:not([open]):hover summary::after { transform: rotate(90deg); }
 }
-.faq details[open] { --mais: var(--preto); --aro: var(--laranja); background-color: var(--preto); }
-.faq details[open]::after, .faq details:has(+ details[open])::after { opacity: 0; }
+.faq details[open] { --mais: var(--preto); --aro: var(--laranja); background-color: var(--preto); box-shadow: inset 0 0 0 1px var(--preto); }
 .faq details[open] summary { color: var(--branco); }
 .faq details[open] summary::after { background-color: var(--laranja); transform: rotate(135deg); }
 .faq details[open] summary:focus-visible { outline-color: var(--branco); }
 .faq summary:focus-visible { outline-offset: -3px; }
-.faq__resposta { padding: 0 var(--e4) var(--e5); max-width: var(--medida); }
+.faq__resposta { padding: 0 var(--e4) var(--e4); max-width: var(--medida); font-size: 0.9375rem; line-height: 1.6; }
 .faq details[open] .faq__resposta { color: var(--sobre-preto); }
 .faq details[open] .faq__resposta a { color: var(--branco); }
 .faq details[open] .faq__resposta a:hover { color: var(--laranja); }
 .faq details[open] .faq__resposta :focus-visible { outline-color: var(--branco); }
-@media (min-width: 600px) { .faq summary { padding-inline: var(--e5); font-size: 1.125rem; } .faq details::after { left: var(--e5); right: var(--e5); } .faq__resposta { padding-inline: var(--e5) calc(var(--e5) + 34px); } }
+@media (min-width: 600px) { .faq summary { padding: var(--e4) var(--e5); font-size: 1.0625rem; } .faq__resposta { padding-inline: var(--e5) calc(var(--e5) + 32px); padding-bottom: var(--e5); } }
 .faq details[open] .faq__resposta { animation: resposta-entra var(--faq-t) var(--faq-ease) 60ms both; }
 @keyframes resposta-entra { from { opacity: 0; transform: translateY(-4px); } }
 

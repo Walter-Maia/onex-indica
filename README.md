@@ -18,7 +18,7 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 
 | Caminho | O que é |
 |---|---|
-| `index.html` | conteúdo, SEO, JSON-LD (Organization, WebPage, BreadcrumbList, HowTo, FAQPage), sprite do X, hero "visita à OneX" |
+| `index.html` | conteúdo, SEO, JSON-LD (Organization, WebPage, BreadcrumbList, HowTo, FAQPage), sprite do X, hero em parallax e a "visita à OneX" |
 | `assets/css/indique.css` | estilos mobile-first, tokens, roteiro comentado da intro, hero (versão estática e `html.visita-on`) |
 | `assets/js/indique.js` | cabeçalho e menu, CTA fixo do celular, efeitos que se repetem, ícones, títulos linha a linha, simulador, formulário |
 | `assets/js/visita.js` | hero: câmera da rolagem e efeito de pontos em WebGL ("Sunset" do editor ASCII do 21st.dev, com a paleta da OneX) |
@@ -28,6 +28,7 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 | `assets/img/visita/` | `0-fachada` a `5-voip.webp`: fotos ilustrativas geradas no Higgsfield, em tons de cinza (só a luz importa) e em duas versões: a leve (1280 px as largas, 1024 px as quadradas) e a `-hd` (2048 px), que só telas grandes baixam; `6-x.webp`: o X oficial sobre preto; `pontos-*.webp`: as cenas já em pontos, geradas pelo próprio renderizador (`qa/scripts/gera-pontos.js`) para o pôster e a versão estática |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | rastreamento e resumo do programa para assistentes de IA |
 | `docs/` | `parallax.md` (as versões do hero em parallax) e `parallax-proximos-passos.md` (as 4 sugestões para a visita) |
+| `backup/` | o site como estava em 27/10/2026, antes do site novo (as 5 páginas e os `assets/` delas) |
 | `qa/scripts/` | harness de QA (Edge headless por DevTools Protocol via pipe, Node 14) e geradores |
 | `qa/final/` | capturas e registros da verificação final |
 
@@ -101,14 +102,30 @@ Três passadas na GPU: (1) a grade, um texel por célula, amostra a cena da vez 
 
 **Quando não roda** (sem JS, sem WebGL, movimento reduzido, `?fx=0`, ou se a leitura dos pixels falhar): o `<head>` não liga `html.visita-on` (ou o JS desliga), e o hero vira a versão estática: a fachada em pontos (`pontos-0.webp`, retrato `pontos-0-retrato.webp`) atrás do texto e as paradas como cartões, cada um com a sua cena em pontos.
 
-## Hero em parallax (duas versões para comparar)
+## Site novo (27/10/2026) e backup
 
-Duas páginas de teste, fora do índice de busca (`noindex`), com o mesmo conteúdo do `index.html` e só o hero trocado. O registro completo (arquivos, ajustes, como refazer as camadas, testes) está em [docs/parallax.md](docs/parallax.md), e as sugestões para deixar a visita mais dinâmica a partir da 3ª parada, em [docs/parallax-proximos-passos.md](docs/parallax-proximos-passos.md).
+O `index.html` agora é a versão imersiva que estava em `index-parallax-visita.html`, com estes ajustes:
 
-| Página | Hero |
+- **Hero em parallax** em tela cheia, sem o olho "Programa de indicação OneX Data Centers" e sem subtítulo: o título, a condição ("quando a empresa indicada contrata", em todas as telas) e os botões. Na paisagem o texto fica no meio da tela, centralizado; no retrato, embaixo e à esquerda. No lugar de "Role para visitar a OneX", um mouse em pixels no meio da base, com a rodinha descendo; ele some no começo da rolagem (`.parallax__mouse`, `parallax.js`). No retrato o texto termina acima dele; em celulares de até 760 px de altura ele sai.
+- **Cabeçalho** só com o logo, no meio da tela. Depois da rolagem, o logo ganha uma pílula translúcida no tom do que passa por baixo, para não brigar com o conteúdo.
+- **Visita** só até o rack (`data-visita-cenas="0,1,2"`), sem "Pular a visita". No rack, os servidores vêm para perto e o cartão laranja de "Como funciona" sobe por cima do palco preso (`data-visita-sobe`: a última tela da seção, com o cartão em `margin-top: -100svh`). Rede, storage e telefonia ficam nos cartões de "Produtos".
+- **Como funciona** é um cartão laranja (como "Por que a OneX"). Cada passo é um cartão (papel; o da comissão, preto) com o ícone da etapa num círculo preto no lugar do número.
+- **FAQ** com um vão entre as perguntas (cada uma é um cartão) e letra menor.
+- **O fechamento** ("Conhece uma empresa que precisa de infraestrutura?") saiu; a página termina no FAQ e no rodapé.
+
+O site como estava antes dessas mudanças está em `backup/`, com as próprias cópias de `assets/` (abre sozinho):
+
+| Página em `backup/` | O que é |
 |---|---|
-| `index-parallax.html` | só o parallax: o texto do hero sobre as camadas, e a página segue direto para o "Como funciona" |
-| `index-parallax-visita.html` | versão imersiva: o parallax em tela cheia abre a página, o cabeçalho é só a marca da OneX (sem links, botão nem barra) e, ao descer, o texto do parallax apaga e a visita entra emendada, já em tela cheia (`data-visita-continua`: sem a caixa, com a abertura "Entre no data center e veja o que dá para indicar" aparecendo enquanto o palco chega). Na visita, os textos se espalham pela tela (`data-visita-espalha`): na paisagem, a cena fica no meio, o rótulo e o título num canto do alto e os itens e o ganho nos cantos de baixo, espelhados de uma parada para a outra; cada pedaço sobe na sua velocidade (`data-vel`), o que dá o parallax dos textos. No retrato, os textos continuam empilhados embaixo, com um parallax mais leve. Rede, storage e telefonia viram um momento só (`data-visita-junta`): a câmera passa pelas três num mergulho rápido (cada trecho com 45% da rolagem; a seção cai de 6,5 para 4,85 trechos) e os três textos aparecem juntos, só com título e ganho, cada um entrando do seu lado e subindo na sua velocidade (detalhes em `docs/parallax.md`). "Pular a visita" sobe para a linha do cabeçalho. A seção "Produtos" também é em parallax (`assets/js/parallax-secoes.js`, genérico: `data-paralaxe="v"` num elemento ou `data-paralaxe-colunas="v1,v2,v3"` num grupo): os nove produtos viram cartões em colunas que passam em velocidades diferentes (a do meio corre na frente) e o título fica um pouco para trás; a partir de 700 px, sem movimento reduzido nem `?fx=0` (no celular, uma coluna parada) |
+| `index.html` | a página oficial de antes, com o hero da visita |
+| `index-parallax.html` | só o parallax |
+| `index-parallax-visita.html` | a versão imersiva (opções 1 + 2: rede, storage e telefonia num momento só) |
+| `index-visita-lateral.html` | opção 3: do rack em diante a câmera anda de lado |
+| `index-visita-curta.html` | opção 4: a visita termina no rack e mergulha no X |
+
+O registro do parallax (arquivos, ajustes, como refazer as camadas, testes) está em [docs/parallax.md](docs/parallax.md), e as 4 sugestões para a visita, em [docs/parallax-proximos-passos.md](docs/parallax-proximos-passos.md).
+
+### Como o parallax funciona
 
 É o "Parallax" do Osmo (componente React com GSAP, ScrollTrigger e Lenis) refeito em JS vanilla, sem dependências: quatro camadas presas no hero descem em velocidades diferentes enquanto a página sobe (serras de Minas 70% da própria altura, a OneX no morro 55%, o texto 40%, as pedras da frente 10%), e com isso o texto afunda atrás das pedras. O Lenis (rolagem suavizada) ficou de fora: ele sequestra a rolagem nativa, e a rolagem nativa já deixa o efeito fluido. As camadas são fotos noturnas geradas no Higgsfield, em tons de cinza e com fundo transparente (`assets/img/parallax/1-serra`, `2-onex`, `4-frente.webp`), desenhadas em pontos por `assets/js/parallax.js` com a mesma receita da visita (rampa preto → laranja → branco, raio pela luz, contraste local e bloom). Cada camada vira um canvas 2D desenhado uma vez por tamanho de tela, e a rolagem só move os canvas (`transform`). O prédio fica sempre fora do texto: à direita da coluna na paisagem e no vão entre o cabeçalho e o texto no retrato (medido a cada tamanho de tela).
 

@@ -27,43 +27,71 @@
 /* véu que segura o texto (embaixo no retrato, à esquerda na paisagem) e o fim que esfuma no preto */
 .parallax__veu { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(0deg, rgba(10, 9, 9, 0.92) 0%, rgba(10, 9, 9, 0.8) 34%, rgba(10, 9, 9, 0) 62%), radial-gradient(130% 90% at 50% 30%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
 @media (min-aspect-ratio: 9/10) {
-  .parallax__veu { background: linear-gradient(90deg, rgba(10, 9, 9, 0.9) 0%, rgba(10, 9, 9, 0.66) 30%, rgba(10, 9, 9, 0) 56%), radial-gradient(110% 100% at 66% 50%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
+  .parallax__veu { background: radial-gradient(46% 52% at 50% 50%, rgba(10, 9, 9, 0.78) 0%, rgba(10, 9, 9, 0.5) 60%, rgba(10, 9, 9, 0) 100%), radial-gradient(110% 100% at 50% 50%, rgba(10, 9, 9, 0) 42%, rgba(10, 9, 9, 0.55) 100%); }
 }
 .parallax__esfuma { position: absolute; left: 0; right: 0; bottom: 0; height: 10%; z-index: 5; pointer-events: none; background: linear-gradient(rgba(10, 9, 9, 0), var(--preto-fundo) 85%); }
 
 /* texto: a camada do meio (desce 40%), por cima do véu e por baixo das pedras */
 .parallax__texto {
   position: relative; z-index: 3; min-height: calc(100svh - var(--caixa-margem)); display: flex; flex-direction: column; justify-content: flex-end;
-  padding: calc(var(--altura-topo) + var(--e7)) max(var(--lateral), (100% - var(--largura)) / 2) max(var(--e7), 11svh);
+  padding: calc(var(--altura-topo) + var(--e7)) max(var(--lateral), (100% - var(--largura)) / 2) calc(var(--mouse-base) + var(--mouse-alt) + var(--e5));
 }
-@media (min-aspect-ratio: 9/10) { .parallax__texto { justify-content: center; padding-bottom: max(var(--e7), 10svh); } }
+/* paisagem: o texto fica no meio da tela, centralizado (respiro igual em cima e embaixo, já contando o cabeçalho) */
+@media (min-aspect-ratio: 9/10) {
+  .parallax__texto { justify-content: center; align-items: center; text-align: center; padding-bottom: calc(var(--altura-topo) + var(--e7)); }
+  .parallax h1 { text-wrap: balance; }
+  .parallax .hero__condicao { padding-left: 0; border-left: 0; }
+  .parallax__texto .hero__acoes { justify-content: center; }
+}
 .parallax__texto > * { max-width: 38rem; }
 .parallax-on .parallax__texto { will-change: transform; }
 .parallax h1 { font-weight: 800; font-size: var(--t-h1); line-height: 1.04; letter-spacing: -0.03em; }
 .parallax .h1__b { color: var(--laranja); }
+.parallax .hero__condicao { margin-top: var(--e5); }
 .parallax__texto .hero__acoes { animation: sobe 800ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 480ms); }
 .parallax__dica { display: flex; align-items: center; gap: 12px; margin: var(--e6) 0 0; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em; color: var(--sobre-preto-suave); animation: aparece 600ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 900ms); }
 .parallax__dica span { width: 1.5px; height: 28px; border-radius: 2px; background: linear-gradient(var(--laranja), rgba(249, 104, 28, 0)); transform-origin: top; animation: dica 1.8s var(--ease-out) 4 both; animation-delay: calc(var(--rise-start, 0s) + 1200ms); }
+
+/* "role para baixo": o mouse em pixels no meio da base, por cima das pedras; a rodinha desce aos saltos (um pixel por
+   vez) e a seta pisca. Some ao rolar (parallax.js). No retrato o texto termina acima dele (--mouse-base + --mouse-alt) */
+.parallax { --mouse-base: max(var(--e8), 10svh); --mouse-alt: 54px; }
+@media (max-width: 599.98px) { .parallax { --mouse-base: var(--e7); --mouse-alt: 40px; } }
+.parallax__mouse {
+  position: absolute; z-index: 6; left: 50%; bottom: var(--mouse-base); width: 27px; height: auto; margin-left: -13.5px;
+  shape-rendering: crispEdges; pointer-events: none; animation: aparece 600ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 900ms);
+}
+.parallax__mouse-corpo { fill: rgba(255, 255, 255, 0.86); }
+.parallax__mouse-roda { fill: var(--laranja); animation: mouse-roda 1.6s steps(1, end) infinite; }
+.parallax__mouse-seta { fill: var(--laranja); animation: mouse-seta 1.6s steps(1, end) infinite; }
+@keyframes mouse-roda { 0% { transform: translateY(0); opacity: 1; } 25% { transform: translateY(1px); } 50% { transform: translateY(2px); } 75% { transform: translateY(3px); opacity: 0.4; } 100% { transform: translateY(3px); opacity: 0; } }
+@keyframes mouse-seta { 0%, 45% { opacity: 0.25; } 50%, 95% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .parallax__mouse-roda, .parallax__mouse-seta { animation: none; } }
+@media (max-width: 599.98px) { .parallax__mouse { width: 20px; margin-left: -10px; } }
+/* sem altura para ele: celular deitado e celular em pé baixo (o texto volta a descer até perto da base) */
+@media (max-height: 520px) { .parallax__mouse { display: none; } }
+@media (max-aspect-ratio: 9/10) and (max-height: 760px) {
+  .parallax__mouse { display: none; }
+  .parallax__texto { padding-bottom: max(var(--e7), 11svh); }
+}
 
 /* paisagem: o título acompanha a altura da tela (notebooks baixos) */
 @media (min-aspect-ratio: 9/10) {
   .parallax h1 { font-size: min(var(--t-h1), 7.2vh); font-size: min(var(--t-h1), 7.2svh); }
 }
-/* celular em pé: a condição e a dica saem (o subtítulo já diz que a 1ª parcela é sua quando a empresa contrata) e a OneX ganha espaço acima do texto */
-@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .parallax .hero__condicao, .parallax__dica { display: none; } }
+/* celular em pé: a dica sai e a OneX ganha espaço acima do texto. A condição fica em todas as telas: sem subtítulo, é
+   ela que diz que a 1ª parcela só é sua quando a empresa contrata */
+@media (max-aspect-ratio: 9/10) and (max-width: 599.98px) { .parallax__dica { display: none; } }
 /* celulares de até 760 px de altura (SE, Galaxy de 360 × 740): o título encolhe e o olho sai, para a OneX caber entre o
    cabeçalho e o texto; notebooks baixos: tudo mais junto */
 @media (max-aspect-ratio: 9/10) and (max-height: 760px) {
   .parallax .hero__olho, .parallax__dica { display: none; }
   .parallax h1 { font-size: clamp(1.875rem, 1.2rem + 3.2vw, 2.25rem); }
-  .parallax .hero__sub { margin-top: var(--e4); font-size: 0.9375rem; line-height: 1.5; }
   .parallax__texto .hero__acoes { margin-top: var(--e5); gap: var(--e2); }
 }
 @media (min-aspect-ratio: 9/10) and (max-height: 820px) {
-  .parallax__texto { padding-top: calc(var(--altura-topo) + var(--e6)); }
+  .parallax__texto { padding-block: calc(var(--altura-topo) + var(--e6)); }
   .parallax .hero__olho { margin-bottom: var(--e3); }
-  .parallax .hero__sub { margin-top: var(--e4); font-size: 1.0625rem; line-height: 1.5; }
-  .parallax .hero__condicao { display: none; }
+  .parallax .hero__condicao { margin-top: var(--e4); }
   .parallax__texto .hero__acoes { margin-top: var(--e5); }
   .parallax__dica { margin-top: var(--e5); }
 }
@@ -73,7 +101,7 @@
   .parallax__texto > * { max-width: min(34rem, 56vw); }
   .parallax h1 { font-size: min(var(--t-h1), 6.6vh); font-size: min(var(--t-h1), 6.6svh); }
   .parallax .hero__olho { margin-bottom: var(--e2); font-size: 0.75rem; }
-  .parallax .hero__sub { margin-top: var(--e3); font-size: 0.875rem; line-height: 1.45; }
+  .parallax .hero__condicao { margin-top: var(--e3); font-size: 0.875rem; line-height: 1.45; }
   .parallax__texto .hero__acoes { margin-top: var(--e4); gap: var(--e2); }
   .parallax__texto .botao { min-height: 44px; padding-block: var(--e2); font-size: 0.9375rem; }
 }
@@ -90,7 +118,15 @@
    ========================================================================== */
 /* cabeçalho: só a OneX, sem a barra que aparece ao rolar (o logo continua trocando de tom sobre o papel) */
 .topo--so-marca .topo__barra { pointer-events: none; background: none !important; border-color: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-.topo--so-marca .topo__marca { pointer-events: auto; }
+.topo--so-marca .topo__barra { justify-content: center; }
+.topo--so-marca .topo__marca { pointer-events: auto; margin-inline: auto; padding: 6px 16px; border-radius: 999px; transition: background-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out); }
+/* no meio da tela, o logo passa por cima do conteúdo: depois da rolagem ganha uma pílula translúcida no tom do que passa por baixo */
+.js .topo--so-marca.topo--rolado .topo__marca { background: rgba(246, 244, 241, 0.86); box-shadow: 0 6px 20px rgba(17, 16, 16, 0.1); }
+.js .topo--so-marca.topo--rolado[data-tom="escuro"] .topo__marca { background: rgba(17, 16, 16, 0.78); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  .js .topo--so-marca.topo--rolado .topo__marca { background: rgba(246, 244, 241, 0.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .js .topo--so-marca.topo--rolado[data-tom="escuro"] .topo__marca { background: rgba(17, 16, 16, 0.6); }
+}
 
 .parallax--tela { margin: 0; border-radius: 0; }
 .parallax--tela .parallax__moldura { border-radius: 0; }
@@ -110,7 +146,8 @@
   .visita-on .visita--espalhada .parada__titulo { font-size: min(clamp(2rem, 1.2rem + 2.6vw, 3.5rem), 7svh); }
   .visita--espalhada .parada .indice { grid-area: 1 / 1; }
   .visita--espalhada .parada__titulo { grid-area: 2 / 1; max-width: 14ch; text-wrap: balance; }
-  .visita--espalhada .parada__itens { grid-area: 4 / 2 / 6 / 3; align-self: end; justify-self: end; width: min(100%, 26rem); }
+  .visita--espalhada .parada__itens { grid-area: 4 / 2 / 6 / 3; align-self: end; justify-self: end; width: min(100%, 26rem); margin-bottom: 7svh; }
+  .visita--espalhada .parada__itens li { text-wrap: pretty; }
   .visita--espalhada .parada__ganho { grid-area: 5 / 1; align-self: end; max-width: 24rem; }
   .visita--espalhada .parada:nth-child(even) .indice { grid-area: 1 / 2; justify-self: end; }
   .visita--espalhada .parada:nth-child(even) .parada__titulo { grid-area: 2 / 2; justify-self: end; text-align: right; }
@@ -164,8 +201,37 @@
 @media (max-width: 767.98px) {
   .visita-on .visita--espalhada .visita__coluna { padding-bottom: calc(var(--e8) + var(--e6) + env(safe-area-inset-bottom, 0px)); }
 }
-/* "Pular a visita" sobe para a linha do cabeçalho, à direita (sem os links, o canto fica livre) */
-.visita-on .visita--espalhada a.visita__pular { top: calc(env(safe-area-inset-top, 0px) + var(--caixa-margem) + (var(--altura-topo) - 32px) / 2); bottom: auto; }
+/* fim da visita (data-visita-sobe): o cartão seguinte sobe por cima do palco preso durante a última tela da seção (a
+   cauda em visita.js dura 100svh), enquanto os servidores vêm para perto e o palco vira caixa. O cartão tem no mínimo
+   uma tela de altura: mais baixo que isso, o fim do palco preto aparecia embaixo dele e nas bordas arredondadas. Na
+   tela maior que o conteúdo, ele fica no meio do cartão */
+.visita-on .visita--sobe + .caixa { margin-top: -100vh; margin-top: -100svh; min-height: 100vh; min-height: 100svh; z-index: 2; box-shadow: 0 -24px 64px -12px rgba(0, 0, 0, 0.45); display: flex; flex-direction: column; justify-content: center; }
+.visita-on .visita--sobe + .caixa > * { width: 100%; }
+
+/* ==========================================================================
+   COMO FUNCIONA NO CARTÃO LARANJA: cada passo é um cartão (papel; o da comissão, preto) com o ícone da etapa num
+   círculo preto (o traço em laranja, como os números de antes). A sequência de entrada continua a mesma (indique.js)
+   ========================================================================== */
+.como .passos { --no: 52px; gap: var(--e3); margin-top: var(--e7); }
+.como .passo { padding: var(--e5); border-radius: calc(var(--caixa-raio) * 0.6); background: var(--papel); color: var(--cinza); box-shadow: 0 18px 40px -28px rgba(17, 16, 16, 0.55); }
+.como .passo::after { display: none; }
+.como .passo__no { box-shadow: none; background: var(--preto); color: var(--laranja); }
+.passo__ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.como .passo__titulo { margin-top: var(--e1); color: var(--preto); }
+.como .passo p { color: var(--cinza); }
+.como .passo--comissao { background: var(--preto); }
+.como .passo--comissao .passo__no { background: var(--laranja); color: var(--preto); }
+.como .passo--comissao .passo__titulo { color: var(--branco); }
+.como .passo--comissao p { color: var(--sobre-preto); }
+@media (min-width: 900px) {
+  .como .passos { gap: var(--e4); }
+  .como .passo { padding: var(--e6) var(--e5); }
+  .como .passo__titulo { margin-top: var(--e5); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .como .passo { transition: transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out); }
+  .como .passo:hover { transform: translateY(-3px); box-shadow: 0 24px 48px -26px rgba(17, 16, 16, 0.6); }
+}
 
 .fx-0 .parallax__camada { display: none; }
 @media print {

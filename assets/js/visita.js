@@ -81,8 +81,14 @@
     { src: 'assets/img/visita/5-voip', c: [0.5, 0.5], f: [0.806, 0.3], k: [0.6, 1.0], kh: 0.95, r: 0.2, luz: 0.85 },
     { src: 'assets/img/visita/6-x', c: [0.5, 0.49], f: [0.5, 0.49], k: [0.92, 1.9], luz: 1.15 }
   ];
+  // data-visita-cenas="0,1,2,6": a visita usa só essas cenas, nessa ordem (as legendas seguem a nova numeração)
+  var escolhidas = secao.getAttribute('data-visita-cenas');
+  if (escolhidas) CENAS = escolhidas.split(',').map(function (i) { return CENAS[+i]; }).filter(Boolean);
   var N = CENAS.length;
-  var CAUDA = 0.5;                       // rolagem parada no fim (o palco volta ao formato de caixa)
+  // data-visita-sobe: a seção seguinte (um cartão) sobe por cima do palco no fim. A cauda dura uma tela (100svh, em
+  // trechos de 88svh; o cartão sobe com margin-top: -100svh no CSS) e, nela, a câmera chega perto da última cena
+  var sobe = secao.hasAttribute('data-visita-sobe');
+  var CAUDA = sobe ? 100 / 88 : 0.5;     // rolagem parada no fim (o palco volta ao formato de caixa)
   // opções da seção: data-visita-continua (vem logo depois de outro hero escuro: entra em tela cheia e a abertura
   // aparece enquanto o palco chega, com t de T0 a 0), data-visita-espalha (os textos de cada parada se espalham pela
   // tela e sobem em velocidades diferentes, data-vel) e data-visita-junta (as paradas JUNTA viram um momento só: a
@@ -94,9 +100,17 @@
   var T0 = continua ? -0.6 : 0;
   var JUNTA = [3, 5];                    // rede, storage e telefonia
   var juntaEm = function (k) { return junta && k >= JUNTA[0] && k <= JUNTA[1]; };
+  // data-visita-lateral: nas travessias LATERAL (do rack à rede, da rede ao storage, do storage à telefonia) a câmera
+  // não mergulha: anda de lado, a cena atual sai pela esquerda e a próxima entra pela direita, e os textos dessas
+  // paradas deslizam como painéis (cada pedaço numa velocidade). Da telefonia ao X, o mergulho de sempre
+  var lateral = secao.hasAttribute('data-visita-lateral');
+  var LATERAL = [2, 4];
+  var lateralEm = function (i) { return lateral && i >= LATERAL[0] && i <= LATERAL[1]; };
+  var lateralParada = function (k) { return lateral && k > LATERAL[0] && k <= LATERAL[1] + 1; };
   // rolagem de cada trecho da câmera (de t = i a i + 1; o último é a cauda), em trechos de --visita-trecho: no
-  // mergulho das paradas juntas, 45% (a seção sai de 6,5 para 4,85 trechos; a altura dela vem daqui, --visita-trechos)
-  var PESOS = CENAS.map(function (c, i) { return juntaEm(i) ? 0.45 : 1; });
+  // mergulho das paradas juntas, 45% (a seção sai de 6,5 para 4,85 trechos; a altura dela vem daqui, --visita-trechos);
+  // nas travessias laterais depois da primeira, 70% (5,9 trechos)
+  var PESOS = CENAS.map(function (c, i) { return juntaEm(i) ? 0.45 : lateralEm(i) && i > LATERAL[0] ? 0.7 : 1; });
   var TRECHOS = PESOS.reduce(function (soma, p, i) { return soma + p * (i < N - 1 ? 1 : CAUDA); }, 0);
   // tempo da câmera ↔ rolagem desde o topo da seção (em trechos). Antes de a seção chegar (negativo), um para um
   var tDe = function (x) {
@@ -386,12 +400,32 @@
     var b = topos[i + 1] === undefined ? a : topos[i + 1];
     return a + (b - a) * suave(0.5, 0.8, t - i);
   };
+  // travessia lateral: na primeira metade do trecho, a parada (uma deriva leve para a esquerda); na segunda, o passo de
+  // lado, com aceleração e chegada suaves. posLateral: onde a "câmera" está, em paradas (3,5 = a meio caminho da 3 à 4)
+  var LADO = 1.12;  // distância entre as cenas, em larguras de tela
+  var eLateral = function (f) { return f < 0.5 ? 0.04 * f / 0.5 : 0.04 + 0.96 * vaiVem((f - 0.5) / 0.5); };
+  var posLateral = function (t) {
+    var i = Math.floor(t);
+    if (i < LATERAL[0]) return t;
+    if (i > LATERAL[1]) return LATERAL[1] + 1;
+    return i + eLateral(t - i);
+  };
   // cada camada: a cena, a escala (1 = parada), a opacidade, o ponto da tela A (frações) e o ponto da foto P que fica nele
   var camadas = function (t) {
     var i = Math.min(Math.floor(t), N - 1);
     var f = t - i;
-    if (i === N - 1) return [{ c: CENAS[i], s: 1 + 0.05 * suave(0, CAUDA, f), a: 1, A: ancoraDe(), P: CENAS[i].c }];
+    // no fim, a câmera se aproxima devagar; com data-visita-sobe, os servidores vêm para perto enquanto o cartão sobe
+    if (i === N - 1) return [{ c: CENAS[i], s: 1 + (sobe ? 0.45 * vaiVem(suave(0, CAUDA, f)) : 0.05 * suave(0, CAUDA, f)), a: 1, A: ancoraDe(), P: CENAS[i].c }];
     var c = CENAS[i], p = CENAS[i + 1];
+    // travessia lateral: as duas cenas no tamanho de parada, a atual saindo pela esquerda e a próxima entrando pela
+    // direita, um pouco mais longe que uma tela (as fotos não se encostam); os textos andam uma tela (parallax)
+    if (lateralEm(i)) {
+      var passo = eLateral(f), AL = ancoraDe();
+      return [
+        { c: c, s: 1, a: 1, A: [AL[0] - passo * LADO, AL[1]], P: c.c },
+        { c: p, s: 1, a: 1, A: [AL[0] + (1 - passo) * LADO, AL[1]], P: p.c }
+      ];
+    }
     // e: quanto da travessia já foi feito. Na primeira metade, uma deriva lenta (a parada); na segunda, a câmera
     // mergulha no ponto de entrada até a próxima cena, aninhada ali, ocupar a tela no tamanho dela. Nas paradas
     // juntas, um mergulho só: a deriva dura um quarto do trecho e a câmera não chega a frear entre uma cena e outra
@@ -487,7 +521,7 @@
   // chega (t negativo: a seção ainda está subindo) e o palco já entra em tela cheia, sem a caixa
   var visibilidade = function (k, d) {
     var entra = k === 0 ? (continua ? suave(-0.5, -0.1, d) : 1) : suave(-0.22, -0.02, d);
-    var sai = k === N - 1 ? 0 : suave(0.38, 0.54, d);
+    var sai = k === N - 1 ? (sobe ? suave(0.05, 0.4, d) : 0) : suave(0.38, 0.54, d);
     // paradas juntas: entram uma logo depois da outra enquanto a câmera chega à primeira cena e saem juntas quando ela
     // mergulha na cena seguinte à última
     if (juntaEm(k)) {
@@ -514,6 +548,24 @@
     el._v = v;
     el.classList.toggle('ativa', v > 0.5);
   };
+  // paradas laterais: cada uma é um painel que anda uma tela por parada (x, em larguras de tela, positivo à direita) e
+  // apaga quando passa de meia tela; dentro dele, cada pedaço (data-vel) anda mais que o painel, então o título, os
+  // itens e o ganho se afastam no caminho e se juntam na parada. A última sai como as outras paradas (o mergulho no X)
+  var mostraLateral = function (el, k, t) {
+    var x = k - posLateral(t);
+    var v = 1 - suave(0.5, 0.92, Math.abs(x));
+    if (k === LATERAL[1] + 1) v *= 1 - suave(0.38, 0.54, t - k);
+    if (v > 0 || el._v > 0) {
+      el.style.opacity = v.toFixed(3);
+      el.style.transform = 'translate3d(' + (x * W).toFixed(1) + 'px,0,0)';
+      el._filhos = el._filhos || [].slice.call(el.querySelectorAll('[data-vel]'));
+      for (var j = 0; j < el._filhos.length; j++) {
+        el._filhos[j].style.transform = 'translate3d(' + (x * W * +el._filhos[j].getAttribute('data-vel') * 1.4).toFixed(1) + 'px,0,0)';
+      }
+    }
+    el._v = v;
+    el.classList.toggle('ativa', v > 0.5);
+  };
   var legendasEm = function (t) {
     for (var i = 0; i < legendas.length; i++) {
       var el = legendas[i];
@@ -521,6 +573,7 @@
       var d = t - k;
       var v = visibilidade(k, d);
       if (juntaEm(k)) { mostraJunta(el, k, t, v); continue; }
+      if (lateralParada(k)) { mostraLateral(el, k, t); continue; }
       // textos espalhados: cada pedaço da legenda (data-vel) sobe na sua velocidade enquanto a parada passa, e eles se
       // afastam e se aproximam (no retrato, mais de leve: estão empilhados)
       if (espalha && (v > 0 || el._v > 0)) {
@@ -538,7 +591,7 @@
     }
     palco.classList.toggle('no-fim', t > N - 1.4); // no X final, 'Pular a visita' sai de cena
     // o palco começa como caixa (o papel em volta), abre para a tela inteira ao entrar e volta a ser caixa no fim
-    var m = Math.max(continua ? 0 : 1 - suave(0, 0.32, t), suave(N - 1 + 0.08, N - 1 + CAUDA, t));
+    var m = Math.max(continua ? 0 : 1 - suave(0, 0.32, t), sobe ? suave(N - 1 + 0.3, N - 1 + CAUDA * 0.9, t) : suave(N - 1 + 0.08, N - 1 + CAUDA, t));
     palco.style.setProperty('--visita-m', m.toFixed(3));
   };
 
