@@ -260,26 +260,38 @@
       }).join('');
     };
 
+    var timerAltura = 0;
     var troca = function (texto, ehTexto) {
       if (texto === anterior) return;
       anterior = texto;
       var animar = !semMovimento();
-      valorEl.classList.toggle('sim__valor--texto', ehTexto);
       var velho = $('.sim__num:not(.sai)', valorEl);
       var novo = doc.createElement('span');
-      novo.className = 'sim__num';
+      novo.className = 'sim__num' + (ehTexto ? ' sim__num--texto' : '');  // o tamanho vai no valor, não no bloco
       novo.textContent = texto;
       if (!animar || !velho) {
         valorEl.innerHTML = '';
         valorEl.appendChild(novo);
         return;
       }
+      clearTimeout(timerAltura);
       $$('.sim__num.sai', valorEl).forEach(function (n) { n.remove(); });
+      var antes = valorEl.offsetHeight;
       velho.classList.remove('entra');
       velho.classList.add('sai');
       novo.classList.add('entra');
       valorEl.appendChild(novo);
+      // a altura desliza da do antigo para a do novo (número de uma linha ↔ texto que quebra em duas no celular): o que
+      // vem embaixo não pula. Se o novo é mais alto, o bloco cresce já (está pronto quando o novo entra, aos 220 ms); se
+      // é mais baixo, encolhe só depois que o antigo sumiu (nada passa por cima do que vem embaixo)
+      var depois = novo.offsetHeight;
+      valorEl.style.transition = 'none';
+      valorEl.style.height = antes + 'px';
+      void valorEl.offsetHeight;
+      valorEl.style.transition = 'height 300ms cubic-bezier(.16, 1, .3, 1) ' + (depois > antes ? 0 : 180) + 'ms';
+      valorEl.style.height = depois + 'px';
       setTimeout(function () { if (velho.parentNode) velho.remove(); }, 240);
+      timerAltura = setTimeout(function () { valorEl.style.height = ''; valorEl.style.transition = ''; }, 560);
       if (parcelas) {
         parcelas.classList.remove('enche');
         void parcelas.offsetWidth;

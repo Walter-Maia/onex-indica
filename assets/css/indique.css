@@ -547,14 +547,16 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 .sim__resultado { margin-top: var(--e6); padding-top: var(--e5); border-top: 1px solid var(--linha-preto); }
 .sim__rotulo { margin: 0 0 var(--e1); font-size: 0.875rem; font-weight: 700; color: var(--sobre-preto-suave); }
 /* o valor troca num cruzamento suave: o antigo sobe um pouco e esmaece, o novo só assenta (vindo de baixo) depois que ele sumiu
-   (deslocamento curto, sem recorte nas bordas; algarismos tabulares, sem contagem) */
-.sim__valor { position: relative; margin: 0; font-size: clamp(2.5rem, 1.6rem + 4.2vw, 4.25rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; color: var(--laranja); font-variant-numeric: tabular-nums; }
-.sim__valor--texto { font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.375rem); line-height: 1.2; letter-spacing: -0.02em; }
-.sim__num { display: block; }
-.sim__num.sai { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; animation: num-sai 200ms cubic-bezier(.4, 0, 1, 1) both; }
+   (deslocamento curto, sem recorte nas bordas; algarismos tabulares, sem contagem). Os dois ocupam a mesma célula da
+   grade (nada de posição absoluta: o antigo nunca vaza por cima do que vem embaixo) e cada um tem o seu tamanho (o
+   antigo não muda de fonte no meio da saída); a altura do bloco desliza para a do novo depois que o antigo sumiu (JS) */
+.sim__valor { display: grid; margin: 0; font-size: clamp(2.5rem, 1.6rem + 4.2vw, 4.25rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; color: var(--laranja); font-variant-numeric: tabular-nums; }
+.sim__num { grid-area: 1 / 1; align-self: start; min-width: 0; }
+.sim__num--texto { font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.375rem); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+.sim__num.sai { pointer-events: none; animation: num-sai 200ms cubic-bezier(.4, 0, 1, 1) both; }
 .sim__num.entra { animation: num-entra 460ms var(--ease-out) 220ms both; }
 @keyframes num-sai { to { opacity: 0; transform: translateY(-0.12em); } }
-@keyframes num-entra { from { opacity: 0; transform: translateY(0.18em); } }
+@keyframes num-entra { from { opacity: 0; transform: translateY(0.12em); } }
 .sim__conta { margin: var(--e2) 0 0; font-size: 0.9375rem; line-height: 1.5; color: var(--sobre-preto); }
 /* as parcelas do contrato: só a primeira é sua */
 .parcelas { list-style: none; margin: var(--e5) 0 0; padding: 0; display: grid; grid-template-columns: 2.4fr repeat(3, 1fr) 0.7fr; gap: 6px; }
