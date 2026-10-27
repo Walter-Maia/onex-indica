@@ -9,7 +9,8 @@ Registro das versões do hero em parallax (26/10/2026), para continuar depois. A
 | `index-parallax.html` (A) | só o parallax no lugar da visita; a página segue direto para o "Como funciona" |
 | `index-parallax-visita.html` (B) | versão imersiva: parallax em tela cheia, cabeçalho só com a marca, a visita emendada com os textos espalhados, "Produtos" em cartões com parallax e o X do "Quero indicar" sempre desenhado |
 
-Próximos passos sugeridos para a visita (ela cansa a partir da 3ª parada): [parallax-proximos-passos.md](parallax-proximos-passos.md).
+A visita cansava a partir da 3ª parada; as sugestões estão em [parallax-proximos-passos.md](parallax-proximos-passos.md)
+e a recomendada (1 + 2) já está na B: ver "Rede, storage e telefonia num momento só", abaixo.
 
 ## 1. O parallax do hero (A e B)
 
@@ -105,6 +106,35 @@ continua.
 - "Pular a visita" sobe para a linha do cabeçalho, à direita.
 - Sem essas opções (como no `index.html`), a visita se comporta como antes.
 
+### Rede, storage e telefonia num momento só (`data-visita-junta`)
+Antes eram 6,5 trechos de 88svh com o mesmo esforço em cada parada, e a novidade acabava na 3ª. Agora corredor e rack
+continuam como eram (uma parada cada) e as paradas 3, 4 e 5 viram um momento só (as sugestões 1 e 2 de
+[parallax-proximos-passos.md](parallax-proximos-passos.md)):
+
+- Rolagem (`PESOS` em `visita.js`): os trechos da rede, do storage e da telefonia têm 45% da rolagem dos outros. A seção
+  cai de 6,5 para 4,85 trechos (de 672svh para 527svh de altura; o curso da visita perde 1,65 trecho, um quarto). A
+  conta rolagem ↔ tempo da câmera fica em `tDe`/`xDe`. O JS põe a soma dos pesos em `--visita-trechos`, e o CSS
+  (`.visita--junta`) traz o mesmo 4.85 para a página não pular antes de o JS chegar. Se mudar os pesos, mude os dois.
+- Câmera: nessas três cenas a deriva dura um quarto do trecho, não metade, e o mergulho não freia entre uma cena e
+  outra (curva meio a meio entre a suave e a linear), então rede → storage → telefonia → X é um mergulho só. A
+  inércia é mais curta nos trechos curtos (`7 / √peso`), para o atraso não aparecer mais na tela.
+- Textos: os três aparecem juntos. A rede entra em t = 2,6 a 2,9, o storage 0,1 depois e a telefonia 0,2 depois; os
+  três saem juntos em t = 5,3 a 5,5, quando a câmera mergulha no X. Cada um entra e sai pelo seu lado (rede e
+  telefonia pela esquerda, storage pela direita). O bloco da cena que está na tela fica aceso e os outros a 45%.
+- Layout (`parallax.css`): só rótulo, título e ganho (os itens continuam no HTML, para a versão sem JS, e na seção
+  "Produtos"). Na paisagem: rede no alto à esquerda, storage no meio à direita, telefonia embaixo à esquerda. No
+  retrato, empilhados embaixo, com a cena no vão de cima. No celular deitado tudo enxuga e o ganho perde o detalhe
+  entre parênteses.
+- Velocidades: `data-vel` fica no bloco (rede 0,1, storage 0,4, telefonia 0,2), multiplicando a rolagem em alturas de
+  tela. O storage, sozinho à direita, é o mais rápido e passa pelos dois da esquerda; os da esquerda andam pouco para
+  não encostarem um no outro, no logo nem na base. No celular deitado a subida é de um terço; no retrato, nenhuma
+  (estão empilhados).
+- Celular: na B, o botão do hero fica no parallax, então o CTA fixo "Quero indicar" aparece durante a visita. A
+  coluna de textos ganhou folga embaixo (`--e8 + --e6`) para nenhuma parada terminar atrás dele (antes, todas
+  terminavam uns 9 px atrás).
+- QA: `visitaQA.rolagem(t)` devolve a posição da página para um tempo da câmera, porque a rolagem deixou de ser
+  linear (os scripts antigos usam `t / 6,5`, o que continua certo no `index.html`).
+
 ### "Produtos" em cartões com parallax
 - `assets/js/parallax-secoes.js` (genérico): `data-paralaxe="v"` desloca o elemento `v × (distância do centro dele ao
   centro da tela)`; `data-paralaxe-colunas="v1,v2,v3"` num grupo dá a cada filho a velocidade da sua coluna (medida
@@ -128,6 +158,10 @@ Chromium headless (Playwright, no sandbox do Higgsfield):
   movimento reduzido, `?fx=0` e em `file://`.
 - Versão B: transição, abertura e paradas em 1440 × 900 e 390 × 844; produtos em 1920, 1440, 1024 e 390 px sem
   cartões se encostando.
+- Paradas juntas (27/10/2026, Edge headless de `qa/scripts/cdp.js`): quadros em t = 2,1 a 6,5 em 1920 × 950,
+  1440 × 900, 1366 × 657, 1280 × 600, 1024 × 640, 768 × 1024, 390 × 844, 360 × 640, 667 × 375 e 844 × 390, sem texto
+  saindo da tela, atrás do CTA fixo ou passando pelo logo enquanto está aceso; rolagem de verdade conferida até t = 5,1
+  (a ordem das paradas e a meia luz). O `index.html` continua igual (6,5 trechos, rolagem linear).
 
 Limites conhecidos:
 - No 320 × 568 (iPhone SE antigo) o prédio do hero fica parcialmente atrás do título.

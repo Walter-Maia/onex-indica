@@ -190,9 +190,12 @@
   <!-- A rolagem leva a pessoa para dentro da OneX: fachada → corredor → rack → rede → storage → telefonia → o X. Cada
        parada mostra produtos que dá para indicar. As cenas são fotos ilustrativas geradas no Higgsfield, desenhadas em
        pontos por assets/js/visita.js (efeito "Sunset" do editor ASCII do 21st.dev, refeito em WebGL).
+       Corredor e rack têm uma parada cada; rede, storage e telefonia viram um momento só (data-visita-junta): a câmera
+       passa pelas três num mergulho rápido e os três textos aparecem juntos, só com título e ganho (os itens ficam
+       para "Produtos"), cada um na sua velocidade (data-vel no bloco).
        Sem JS, com movimento reduzido ou ?fx=0: a fachada em pontos (imagem) fica atrás do texto e as paradas viram
        cartões, cada um com a sua cena em pontos. -->
-  <section class="visita visita--espalhada" id="visita" aria-labelledby="h-visita" data-visita data-visita-continua data-visita-espalha data-escuro>
+  <section class="visita visita--espalhada visita--junta" id="visita" aria-labelledby="h-visita" data-visita data-visita-continua data-visita-espalha data-visita-junta data-escuro>
     <div class="visita__palco" data-visita-palco>
       <div class="visita__moldura" aria-hidden="true"></div>
       <div class="visita__arte" aria-hidden="true" data-visita-arte>
@@ -232,36 +235,36 @@
             </ul>
             <p class="parada__ganho" data-vel="0.26">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
           </li>
-          <li class="parada" data-parada="3">
+          <li class="parada parada--junta" data-parada="3" data-vel="0.1">
             <img class="parada__cena" src="assets/img/visita/pontos-3.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true" data-vel="0.32"><span>03</span>A rede</p>
-            <h3 class="parada__titulo" data-vel="0.32">Nuvem, sites e e-mail</h3>
-            <ul class="parada__itens" data-vel="0.12">
+            <p class="indice" aria-hidden="true"><span>03</span>A rede</p>
+            <h3 class="parada__titulo">Nuvem, sites e e-mail</h3>
+            <ul class="parada__itens">
               <li><strong>OnexCloud</strong> Armazenamento de 1 TB compartilhado, com backup incluso.</li>
               <li><strong>Hospedagem de sites</strong> Plano Básico com 2 vCPU, 4 GB de RAM e 20 GB SSD por R$&nbsp;29,90 por mês.</li>
               <li><strong>E-mail profissional</strong> Com o domínio da empresa, para a equipe inteira.</li>
             </ul>
-            <p class="parada__ganho" data-vel="0.26">Você recebe <strong>100% da 1ª parcela</strong> <span>(R$&nbsp;29,90 no Plano Básico de hospedagem)</span></p>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(R$&nbsp;29,90 no Plano Básico de hospedagem)</span></p>
           </li>
-          <li class="parada" data-parada="4">
+          <li class="parada parada--junta" data-parada="4" data-vel="0.4">
             <img class="parada__cena" src="assets/img/visita/pontos-4.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true" data-vel="0.32"><span>04</span>O storage</p>
-            <h3 class="parada__titulo" data-vel="0.32">Backup em nuvem</h3>
-            <ul class="parada__itens" data-vel="0.12">
+            <p class="indice" aria-hidden="true"><span>04</span>O storage</p>
+            <h3 class="parada__titulo">Backup em nuvem</h3>
+            <ul class="parada__itens">
               <li><strong>Backup em nuvem</strong> Cópias de segurança dos dados da empresa, guardadas na nuvem da OneX.</li>
             </ul>
-            <p class="parada__ganho" data-vel="0.26">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
+            <p class="parada__ganho">Você recebe <strong>100% da 1ª parcela</strong> <span>(sob consulta)</span></p>
           </li>
-          <li class="parada" data-parada="5">
+          <li class="parada parada--junta" data-parada="5" data-vel="0.2">
             <img class="parada__cena" src="assets/img/visita/pontos-5.webp" alt="" width="800" height="450" loading="lazy" decoding="async">
-            <p class="indice" aria-hidden="true" data-vel="0.32"><span>05</span>A telefonia</p>
-            <h3 class="parada__titulo" data-vel="0.32">Telefonia VoIP</h3>
-            <ul class="parada__itens" data-vel="0.12">
+            <p class="indice" aria-hidden="true"><span>05</span>A telefonia</p>
+            <h3 class="parada__titulo">Telefonia VoIP</h3>
+            <ul class="parada__itens">
               <li><strong>Essencial</strong> R$&nbsp;99 por mês.</li>
               <li><strong>Profissional</strong> R$&nbsp;199 por mês.</li>
               <li><strong>Enterprise</strong> Sob consulta.</li>
             </ul>
-            <p class="parada__ganho" data-vel="0.26">Você recebe <strong>R$&nbsp;99 ou R$&nbsp;199</strong> <span>(Enterprise sob consulta)</span></p>
+            <p class="parada__ganho">Você recebe <strong>R$&nbsp;99 ou R$&nbsp;199</strong> <span>(Enterprise sob consulta)</span></p>
           </li>
         </ol>
 

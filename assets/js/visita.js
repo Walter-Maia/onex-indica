@@ -84,11 +84,29 @@
   var N = CENAS.length;
   var CAUDA = 0.5;                       // rolagem parada no fim (o palco volta ao formato de caixa)
   // opções da seção: data-visita-continua (vem logo depois de outro hero escuro: entra em tela cheia e a abertura
-  // aparece enquanto o palco chega, com t de T0 a 0) e data-visita-espalha (os textos de cada parada se espalham pela
-  // tela e sobem em velocidades diferentes, data-vel)
+  // aparece enquanto o palco chega, com t de T0 a 0), data-visita-espalha (os textos de cada parada se espalham pela
+  // tela e sobem em velocidades diferentes, data-vel) e data-visita-junta (as paradas JUNTA viram um momento só: a
+  // câmera passa pelas cenas delas num mergulho rápido, sem parar, e os textos aparecem juntos, espalhados, cada um
+  // entrando do seu lado e subindo na sua velocidade)
   var continua = secao.hasAttribute('data-visita-continua');
   var espalha = secao.hasAttribute('data-visita-espalha');
+  var junta = secao.hasAttribute('data-visita-junta');
   var T0 = continua ? -0.6 : 0;
+  var JUNTA = [3, 5];                    // rede, storage e telefonia
+  var juntaEm = function (k) { return junta && k >= JUNTA[0] && k <= JUNTA[1]; };
+  // rolagem de cada trecho da câmera (de t = i a i + 1; o último é a cauda), em trechos de --visita-trecho: no
+  // mergulho das paradas juntas, 45% (a seção sai de 6,5 para 4,85 trechos; a altura dela vem daqui, --visita-trechos)
+  var PESOS = CENAS.map(function (c, i) { return juntaEm(i) ? 0.45 : 1; });
+  var TRECHOS = PESOS.reduce(function (soma, p, i) { return soma + p * (i < N - 1 ? 1 : CAUDA); }, 0);
+  // tempo da câmera ↔ rolagem desde o topo da seção (em trechos). Antes de a seção chegar (negativo), um para um
+  var tDe = function (x) {
+    for (var i = 0; i < N - 1 && x > PESOS[i]; i++) x -= PESOS[i];
+    return x > 0 ? i + x / PESOS[i] : i + x;
+  };
+  var xDe = function (t) {
+    for (var x = 0, i = 0; i < N - 1 && t > 1; i++, t--) x += PESOS[i];
+    return t > 0 ? x + t * PESOS[i] : x + t;
+  };
   // onde fica o assunto: à direita do texto, no meio da altura livre abaixo do cabeçalho (paisagem; sai da largura
   // real da coluna de texto, em medeLegendas), ou no meio do vão entre o cabeçalho e o texto da vez (retrato; a cada
   // quadro, em desenhaGrade)
@@ -327,6 +345,11 @@
     caixas = legendas.map(function (el) { return { topo: el.offsetTop, direita: el.offsetLeft + el.offsetWidth }; });
     topos = [];
     legendas.forEach(function (el, i) { topos[+el.getAttribute('data-parada')] = caixas[i].topo; });
+    // paradas juntas: estão todas na tela ao mesmo tempo, então o texto começa no topo da mais alta
+    if (junta) {
+      var alto = Math.min.apply(null, topos.slice(JUNTA[0], JUNTA[1] + 1));
+      for (var k = JUNTA[0]; k <= JUNTA[1]; k++) topos[k] = alto;
+    }
     var barraTopo = doc.querySelector('.topo__barra');
     cab = barraTopo ? barraTopo.offsetTop + barraTopo.offsetHeight : 80;  // o cabeçalho é fixo no topo (offset ignora a animação de entrada)
     if (!W || retrato) { bordaTexto = -10; return; }
@@ -370,8 +393,10 @@
     if (i === N - 1) return [{ c: CENAS[i], s: 1 + 0.05 * suave(0, CAUDA, f), a: 1, A: ancoraDe(), P: CENAS[i].c }];
     var c = CENAS[i], p = CENAS[i + 1];
     // e: quanto da travessia já foi feito. Na primeira metade, uma deriva lenta (a parada); na segunda, a câmera
-    // mergulha no ponto de entrada até a próxima cena, aninhada ali, ocupar a tela no tamanho dela
-    var e = f < 0.5 ? 0.03 * f / 0.5 : 0.03 + 0.97 * vaiVem((f - 0.5) / 0.5);
+    // mergulha no ponto de entrada até a próxima cena, aninhada ali, ocupar a tela no tamanho dela. Nas paradas
+    // juntas, um mergulho só: a deriva dura um quarto do trecho e a câmera não chega a frear entre uma cena e outra
+    var rapida = juntaEm(i), pausa = rapida ? 0.25 : 0.5, u = (f - pausa) / (1 - pausa);
+    var e = f < pausa ? 0.03 * f / pausa : 0.03 + 0.97 * (rapida ? (vaiVem(u) + u) / 2 : vaiVem(u));
     var lc = largura(c), R = c.r * lc / largura(p);   // largura da próxima em relação à atual, na tela
     var s = Math.pow(1 / R, e), sp = s * R;   // zoom exponencial: velocidade constante para o olho
     var A = ancoraDe();
@@ -463,7 +488,31 @@
   var visibilidade = function (k, d) {
     var entra = k === 0 ? (continua ? suave(-0.5, -0.1, d) : 1) : suave(-0.22, -0.02, d);
     var sai = k === N - 1 ? 0 : suave(0.38, 0.54, d);
+    // paradas juntas: entram uma logo depois da outra enquanto a câmera chega à primeira cena e saem juntas quando ela
+    // mergulha na cena seguinte à última
+    if (juntaEm(k)) {
+      var j = k - JUNTA[0], t = k + d;
+      entra = suave(JUNTA[0] - 0.4 + 0.1 * j, JUNTA[0] - 0.1 + 0.1 * j, t);
+      sai = suave(JUNTA[1] + 0.3, JUNTA[1] + 0.5, t);
+    }
     return Math.max(0, Math.min(entra, 1 - sai));
+  };
+  // paradas juntas: cada uma entra do seu lado (rede e telefonia pela esquerda, storage pela direita) e sai por ele; na
+  // paisagem, sobe na sua velocidade (data-vel × a rolagem, em alturas de tela; no celular deitado, um terço disso, para
+  // caber), então a da direita passa pelas da esquerda. A da cena que está na tela fica acesa; as outras, a meia luz.
+  // No meio do momento (xMeio), cada uma está no lugar dela do CSS
+  var xMeio = (xDe(JUNTA[0] + 0.1) + xDe(JUNTA[1] + 0.3)) / 2;
+  var mostraJunta = function (el, k, t, v) {
+    if (v > 0 || el._v > 0) {
+      var j = k - JUNTA[0];
+      var foco = 1 - suave(0.35, 0.8, Math.abs(t - k - 0.12));
+      var dx = (j % 2 ? 1 : -1) * (1 - v) * 0.12 * W;
+      var y = retrato ? 0 : (xMeio - xDe(t)) * (+el.getAttribute('data-vel') || 0) * H * (H > 520 ? 1 : 0.35);
+      el.style.opacity = (v * (0.45 + 0.55 * foco)).toFixed(3);
+      el.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    }
+    el._v = v;
+    el.classList.toggle('ativa', v > 0.5);
   };
   var legendasEm = function (t) {
     for (var i = 0; i < legendas.length; i++) {
@@ -471,6 +520,7 @@
       var k = +el.getAttribute('data-parada');
       var d = t - k;
       var v = visibilidade(k, d);
+      if (juntaEm(k)) { mostraJunta(el, k, t, v); continue; }
       // textos espalhados: cada pedaço da legenda (data-vel) sobe na sua velocidade enquanto a parada passa, e eles se
       // afastam e se aproximam (no retrato, mais de leve: estão empilhados)
       if (espalha && (v > 0 || el._v > 0)) {
@@ -494,7 +544,7 @@
 
   /* ---------- laço ---------- */
   var alvo = function () {
-    var t = (window.pageYOffset - topoSecao) / curso * (N - 1 + CAUDA);
+    var t = tDe((window.pageYOffset - topoSecao) / curso * TRECHOS);
     return t < T0 ? T0 : t > N - 1 + CAUDA ? N - 1 + CAUDA : t;
   };
   var encadeado = false;  // este quadro veio logo depois de outro (o intervalo entre eles mede a fluidez)
@@ -506,7 +556,10 @@
     antes = agora;
     var t = alvo();
     var dif = t - tCam;
-    tCam = Math.abs(dif) < 0.0004 ? t : tCam + dif * (1 - Math.exp(-dt * 7));
+    // inércia: nos trechos curtos (o mergulho das paradas juntas) a câmera segue a rolagem mais de perto, para o
+    // atraso não ficar maior na tela
+    var peso = PESOS[Math.max(0, Math.min(N - 1, Math.floor(tCam)))];
+    tCam = Math.abs(dif) < 0.0004 ? t : tCam + dif * (1 - Math.exp(-dt * 7 / Math.sqrt(peso)));
     var quer = agora - ultimoGesto < EFEITO.aceso ? 1 : 0;
     energia += (quer - energia) * (1 - Math.exp(-dt * (quer ? 5 : 1.4)));
     if (!quer && energia < 0.004) energia = 0;
@@ -540,6 +593,8 @@
   };
   var gesto = function () { ultimoGesto = performance.now(); acorda(); };
 
+  // a altura da seção acompanha os PESOS (o CSS traz o mesmo número, para a página não pular quando o JS chega)
+  secao.style.setProperty('--visita-trechos', +TRECHOS.toFixed(4));
   try {
     montaGL();
     limite = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), window.innerWidth < 600 ? 1024 : 2048);
@@ -599,7 +654,7 @@
     el.addEventListener('focusin', function () {
       if ((el._v || 0) > 0.5) return;
       var k = +el.getAttribute('data-parada');
-      window.scrollTo({ top: topoSecao + (k / (N - 1 + CAUDA)) * curso, behavior: 'instant' });
+      window.scrollTo({ top: topoSecao + xDe(k) / TRECHOS * curso, behavior: 'instant' });
       tCam = k;
       tPintado = -1;
       gesto();
@@ -633,6 +688,8 @@
       pinta(ultimoSegundo);
       return tela.toDataURL('image/png');
     },
+    // posição da página para o tempo t da câmera (a rolagem não é linear com data-visita-junta)
+    rolagem: function (t) { mede(); return topoSecao + xDe(t) / TRECHOS * curso; },
     falhas: function () { return CENAS.filter(function (c) { return c.falhou; }).map(function (c) { return c.src; }); },
     estado: function () { return { hd: hd, nivel: nivel, celula: +celula.toFixed(3), cd: cd, rx: +rx.toFixed(3), cols: cols, rows: rows, fotos: CENAS.map(function (c) { return c.img ? c.img.naturalWidth : 0; }) }; }
   };

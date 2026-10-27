@@ -1,5 +1,9 @@
 # Visita: deixar mais dinâmica a partir da 3ª parada
 
+> Feito em 27/10/2026: a recomendação (1 + 2) está na versão B com `data-visita-junta`. O que mudou e onde ajustar:
+> [parallax.md](parallax.md), "Rede, storage e telefonia num momento só". A rolagem caiu um quarto, não pela metade:
+> corredor, rack e o fim ficaram no ritmo de antes e somam 3,5 dos 4,85 trechos.
+
 Problema (versão B, `index-parallax-visita.html`): a visita tem 6,5 trechos de 88svh, quase 6 telas de rolagem, e
 cada parada pede o mesmo esforço. Da 3ª parada em diante (rede, storage, telefonia) a pessoa já entendeu a mecânica e
 a novidade acaba. Esses produtos ainda se repetem logo depois, na seção "Produtos".

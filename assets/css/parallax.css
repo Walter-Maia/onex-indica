@@ -124,6 +124,46 @@
   .visita--espalhada .visita__fim-titulo { grid-area: 2 / 1; max-width: 18ch; }
   .visita--espalhada .visita__fim .hero__acoes { grid-area: 5 / 2; align-self: end; justify-self: end; margin: 0; }
 }
+
+/* rede, storage e telefonia juntas (data-visita-junta): um momento só, com os três textos na tela ao mesmo tempo, só
+   rótulo, título e ganho (os itens ficam para "Produtos"). No retrato, empilhados embaixo; na paisagem, a rede no alto
+   à esquerda, o storage no meio à direita e a telefonia embaixo à esquerda. Cada bloco sobe na sua velocidade (data-vel
+   no bloco, em assets/js/visita.js): o vão de cima e o de baixo dão folga para isso */
+.visita-on .visita--junta { --visita-trechos: 4.85; } /* a soma dos PESOS em visita.js (o JS põe o mesmo número) */
+.visita-on .visita--junta .visita__paradas { grid-template: minmax(0, 1fr) auto auto auto / minmax(0, 1fr); row-gap: var(--e5); }
+.visita-on .visita--junta .parada { grid-area: 1 / 1 / -1 / -1; }
+.visita-on .visita--junta [data-parada="3"] { grid-area: 2 / 1; }
+.visita-on .visita--junta [data-parada="4"] { grid-area: 3 / 1; }
+.visita-on .visita--junta [data-parada="5"] { grid-area: 4 / 1; }
+.visita-on .visita--junta .parada--junta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e1); max-width: 30rem; }
+.visita-on .visita--junta .parada--junta .parada__itens { display: none; }
+.visita-on .visita--junta .parada--junta > * { align-self: auto; margin: 0; }
+.visita-on .visita--junta .parada--junta .parada__titulo { font-size: clamp(1.375rem, 1.1rem + 1.2vw, 1.75rem); max-width: none; }
+.visita-on .visita--junta .parada--junta .parada__ganho { font-size: 0.875rem; line-height: 1.4; }
+@media (min-aspect-ratio: 9/10) {
+  .visita-on .visita--junta .visita__paradas { grid-template: auto minmax(0, 1fr) auto minmax(0, 1fr) auto / minmax(0, 1fr) minmax(0, 1fr); gap: 0 var(--e8); }
+  .visita-on .visita--junta [data-parada="3"] { grid-area: 1 / 1; justify-self: start; margin-top: 6svh; }
+  .visita-on .visita--junta [data-parada="4"] { grid-area: 3 / 2; justify-self: end; align-items: flex-end; text-align: right; }
+  .visita-on .visita--junta [data-parada="5"] { grid-area: 5 / 1; justify-self: start; margin-bottom: 11svh; }
+  .visita-on .visita--junta .parada--junta { gap: var(--e2); max-width: min(26rem, 40vw); }
+  .visita-on .visita--junta .parada--junta .parada__titulo { font-size: min(clamp(1.75rem, 1.1rem + 2vw, 3rem), 6svh); max-width: 14ch; }
+  .visita-on .visita--junta .parada--junta .parada__ganho { font-size: 0.9375rem; line-height: 1.5; }
+}
+/* celular deitado: os três blocos enxugam (título numa linha, ganho sem o detalhe) e sobem menos (em visita.js) */
+@media (min-aspect-ratio: 9/10) and (max-height: 520px) {
+  .visita-on .visita--junta [data-parada="3"] { margin-top: 0; }
+  .visita-on .visita--junta [data-parada="5"] { margin-bottom: 0; }
+  .visita-on .visita--junta .parada--junta { gap: 2px; max-width: min(22rem, 44vw); }
+  .visita-on .visita--junta .parada--junta .indice { font-size: 0.6875rem; }
+  .visita-on .visita--junta .parada--junta .parada__titulo { font-size: 1.125rem; max-width: none; }
+  .visita-on .visita--junta .parada--junta .parada__ganho { font-size: 0.75rem; line-height: 1.35; }
+  .visita-on .visita--junta .parada--junta .parada__ganho span { display: none; }
+}
+/* celular: o CTA fixo ("Quero indicar") já está na tela durante a visita (o botão do hero ficou no parallax), então o
+   texto termina acima dele */
+@media (max-width: 767.98px) {
+  .visita-on .visita--espalhada .visita__coluna { padding-bottom: calc(var(--e8) + var(--e6) + env(safe-area-inset-bottom, 0px)); }
+}
 /* "Pular a visita" sobe para a linha do cabeçalho, à direita (sem os links, o canto fica livre) */
 .visita-on .visita--espalhada a.visita__pular { top: calc(env(safe-area-inset-top, 0px) + var(--caixa-margem) + (var(--altura-topo) - 32px) / 2); bottom: auto; }
 
