@@ -185,7 +185,7 @@ html:not(.js) .botao--topo { display: inline-flex; }
 }
 /* entrada em partes: o X gira e assenta com mola, o nome vem da esquerda, os links e o botão descem.
    Começa quando a intro dissolve (--rise-start); sem intro, logo na carga. */
-html.intro-ativa, html.intro-saindo { --rise-start: 3s; }
+html.intro-ativa, html.intro-tocando { --rise-start: 3s; }
 .logo__parte--x { transform-origin: 86.7% 40%; animation: x-entra 800ms var(--ease-mola) backwards; animation-delay: calc(var(--rise-start, 0s) + 60ms); }
 .logo__parte--nome { animation: nome-entra 560ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 200ms); }
 .topo__links > li { animation: topo-entra 420ms var(--ease-out) backwards; animation-delay: calc(var(--rise-start, 0s) + 300ms + var(--i, 0) * 60ms); }
@@ -727,97 +727,47 @@ section[id] { scroll-margin-top: calc(var(--altura-topo) + var(--caixa-margem));
 }
 
 /* ==========================================================================
-   INTRO "conexão" (uma vez por sessão; controle em assets/js/intro.js)
-   Conceito: indicar é ligar duas pontas. Duas trilhas de luz laranja entram pelos cantos de cima (você → indicado e
-   o retorno) correndo exatamente pelos eixos do X da OneX e se cruzam no ponto de cruzamento do próprio X; as três
-   peças oficiais correm pelos mesmos eixos e travam; a arte oficial assenta; "100%" sobe algarismo por algarismo; a
-   tela se abre em diagonal, pela linha "/" do X, e entrega o hero. Diferente da intro do site principal (varredura de
-   terminal, letras digitadas, dissolução em ASCII): aqui não há texto digitado, nem monoespaçada, nem caracteres.
-   ROTEIRO (t = 0 quando .ix-tocando entra)
+   INTRO "indique \ receba /" (uma vez por sessão; desenho e relógio em assets/js/intro.js)
+   Conceito: o X da OneX são dois eixos, "\" e "/", e o programa são dois verbos, indique e receba. Numa grade de
+   caracteres, o "\" se escreve com o glifo \ (indique) e o "/" com o glifo / (receba); no cruzamento, cada célula vira
+   um x (o X feito de x) e uma onda sai dali escrevendo a paisagem do hero em caracteres. O X oficial entra por cima e
+   voa para o cabeçalho enquanto uma varredura "/" derrete os caracteres nos pontos do hero: a intro vira o hero, sem
+   corte. Diferente da intro do site principal (varredura de terminal, letras digitadas, dissolução em ASCII): aqui
+   nada é digitado, os glifos são vetoriais e escolhidos pela forma (bordas viram - | / \ na direção do contorno) e o
+   ASCII é a matéria do próprio hero, lida dos canvas dele.
+   Grade: célula de 13 px de altura no celular e ~1/62 da altura da tela no resto (13–18 px), largura = altura / 1,16
+   (a inclinação dos eixos do X: \ e / correm paralelos às peças). Cores: a rampa dos pontos do hero.
+   ROTEIRO (t = 0 quando a intro começa a tocar)
    Início   Duração  Camada                                                         Técnica
-   0,10     0,50     entrada: trilha 1 (de cima à esquerda, eixo "\") e trilha 2 (de   T1 + T2 (traço + cometa)
-                     cima à direita, eixo "/") nascem logo fora da tela e aceleram
-                     até o cruzamento do X; as duas pontas chegam juntas em 0,60
-   0,60     0,45     saída: as trilhas seguem até a borda oposta, desacelerando       T1 + T2
-   0,58     0,62     um pulso único no cruzamento                                    T3 (anel que abre)
-   0,68     0,55     peça A desliza pelo eixo "\" e trava (B 0,76; C 0,84, de baixo)  montar
-   1,15     0,50     as trilhas esmaecem para 14% e ficam como filetes               —
-   1,35     0,30     arte oficial do X entra por cima (peças saem 1,60–1,80)          T11
-   1,50+i·0,07 0,55  "1", "0", "0", "%" sobem das máscaras                           T7
-   2,05     0,45     legenda "da 1ª parcela para quem indica a OneX"                 T7
-   2,50–3,00         marca parada
-   3,00     0,35     saída: a tela se recolhe para o formato da caixa do hero          T12 (variante) + E
-                     (clip-path; o papel em volta aparece) e o conteúdo some (0,26 s)
-   3,15     0,45     as duas metades se abrem pela "/" do X dentro da caixa;           F
-                     cabeçalho e hero entram (--rise-start = 3,0 s, corrigido pelo
-                     instante real da primeira pintura)
+   0,15     0,70     "\" se escreve: peça A e perna direita da C, célula a célula   frente pelo eixo, cabeça branca
+                     pelo eixo (a cabeça nasce branca e esfria para o laranja)     esfriando em 0,26 s
+   0,28     +28 ms   rótulo "\ INDIQUE" sobre o início do "\"                       cada letra passa por 2–3 glifos
+   0,52     0,70     "/" se escreve: peça B e perna esquerda da C                   idem
+   0,64     +28 ms   rótulo "RECEBA /" sobre o início do "/"                        idem
+   0,98     +22 ms   legenda "100% DA 1ª PARCELA" embaixo do X                      idem
+   1,20     0,75     onda do cruzamento para fora: cada célula do X vira X; a        raio com ease-out
+                     paisagem do hero aparece em caracteres a 42% de exposição
+   1,60     0,28     X oficial por cima do X de caracteres                          troca para a arte oficial
+   1,95     +15 ms   rótulos se desfazem em glifos                                  —
+   1,98     0,60     X oficial voa para o X do cabeçalho (escala exponencial)       voo medido no layout real
+   1,98     0,64     varredura "/" de baixo à esquerda para cima à direita; cada     caractere → ponto → abre
+                     célula em 0,34 s: acende a 100%, encolhe, vira ponto e abre
+                     para o hero que está por baixo
+   2,33              --rise-start: o texto do hero sobe; o nome do logo entra       (corrigido pelo instante real
+   2,58              o X pousa: o X do cabeçalho assume (sem a entrada própria)      da primeira pintura)
+   3,00              tudo aberto: o overlay sai do DOM
    ========================================================================== */
-html.intro-ativa::before { content: ""; position: fixed; inset: 0; z-index: 900; background: var(--preto); animation: intro-failsafe 0.5s 4.6s both; }
+html.intro-ativa::before { content: ""; position: fixed; inset: 0; z-index: 900; background: var(--preto-fundo); animation: intro-failsafe 0.5s 4.6s both; }
 @keyframes intro-failsafe { to { opacity: 0; visibility: hidden; } }
-.ix { position: fixed; inset: 0; z-index: 1000; overflow: hidden; display: grid; place-items: center; --ix-w: min(48vw, 250px); }
-/* as duas metades navy: juntas cobrem a tela; na saída se afastam perpendicularmente à "/" do X */
-.ix__metade { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 76vmax; background: var(--preto); transform-origin: 0 0; }
-.ix__metade--a { transform: rotate(-48deg) translate(-50%, calc(-100% + 1px)); }
-.ix__metade--b { transform: rotate(-48deg) translate(-50%, -1px); }
-.ix__palco { position: relative; display: grid; justify-items: center; }
-.ix__x { width: var(--ix-w); height: auto; overflow: visible; }
-.ix__trilha { fill: none; stroke: var(--laranja); stroke-linecap: round; stroke-dasharray: 1 2; stroke-dashoffset: 1.01; }
-.ix__trilha--luz { stroke-width: 26; opacity: 0.16; }
-.ix__trilha--fio { stroke-width: 5; }
-.ix__cometa-luz { opacity: 0; }
-.ix__cometa circle { fill: var(--branco); }
-.ix__cometa .ix__cometa-halo { fill: var(--laranja); opacity: 0.35; }
-.ix__pulso { fill: none; stroke: var(--laranja); stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: center; }
-.ix__peca { fill: var(--laranja-x); opacity: 0; }
-.ix__oficial { opacity: 0; }
-.ix__cem { margin: calc(var(--ix-w) * 0.1) 0 0; display: grid; justify-items: center; text-align: center; color: var(--branco); }
-.ix__digitos { display: flex; font-size: calc(var(--ix-w) * 0.4); font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.ix__m { display: block; overflow: hidden; padding: 0.04em 0.01em 0.08em; margin-bottom: -0.08em; }
-.ix__m > span { display: block; transform: translateY(112%); }
-.ix__pct { color: var(--laranja); }
-.ix__legenda { margin-top: calc(var(--ix-w) * 0.05); font-size: max(14px, calc(var(--ix-w) * 0.066)); font-weight: 600; line-height: 1.35; color: rgba(255, 255, 255, 0.82); opacity: 0; }
-/* entrada acelera até o encontro (0,10–0,60 s); saída continua e desacelera até a borda (0,60–1,05 s) */
-.ix { --ix-entra: cubic-bezier(.45, 0, .75, .6); --ix-sai: cubic-bezier(.25, .45, .45, 1); }
-.ix-tocando .ix__trilha--entra { animation: ix-traco 500ms var(--ix-entra) 100ms both, ix-esmaece 500ms ease 1150ms forwards; }
-.ix-tocando .ix__trilha--sai { animation: ix-traco 450ms var(--ix-sai) 600ms both, ix-esmaece 500ms ease 1150ms forwards; }
-.ix-tocando .ix__trilha--luz.ix__trilha--entra { animation: ix-traco 500ms var(--ix-entra) 100ms both, ix-esmaece-luz 500ms ease 1150ms forwards; }
-.ix-tocando .ix__trilha--luz.ix__trilha--sai { animation: ix-traco 450ms var(--ix-sai) 600ms both, ix-esmaece-luz 500ms ease 1150ms forwards; }
-.ix-tocando .ix__cometa { animation: ix-cometa 950ms linear 100ms both; }
-.ix-tocando .ix__cometa-luz { animation: ix-cabeca 950ms linear 100ms both; }
-.ix-tocando .ix__pulso { animation: ix-pulso 620ms var(--ease-out) 580ms both; }
-.ix-tocando .ix__peca--a { animation: ix-peca-a 550ms var(--ease-out) 680ms both, ix-some 200ms ease 1600ms forwards; }
-.ix-tocando .ix__peca--b { animation: ix-peca-b 550ms var(--ease-out) 760ms both, ix-some 200ms ease 1600ms forwards; }
-.ix-tocando .ix__peca--c { animation: ix-peca-c 550ms var(--ease-out) 840ms both, ix-some 200ms ease 1600ms forwards; }
-.ix-tocando .ix__oficial { animation: ix-aparece 300ms ease-out 1350ms both; }
-.ix-tocando .ix__m > span { animation: ix-digito 550ms var(--ease-out) calc(1500ms + var(--i) * 70ms) both; }
-.ix-tocando .ix__legenda { animation: ix-legenda 450ms var(--ease-out) 2050ms both; }
-.ix.ix-saindo { animation: ix-recorte 350ms var(--ease-out) forwards; }
-.ix.ix-saindo .ix__palco { animation: ix-some 260ms ease forwards; }
-.ix.ix-saindo .ix__metade--a { animation: ix-abre-a 450ms var(--ease-traco) 150ms forwards; }
-.ix.ix-saindo .ix__metade--b { animation: ix-abre-b 450ms var(--ease-traco) 150ms forwards; }
+/* o overlay tem a própria trava: se o JS morrer no meio, ele some sozinho */
+.ix { position: fixed; inset: 0; z-index: 1000; overflow: hidden; animation: intro-failsafe 0.4s 5.4s both; }
+.ix__tela { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ix__x { position: absolute; left: 0; top: 0; max-width: none; transform-origin: 0 0; opacity: 0; will-change: transform, opacity; }
 .ix.ix-pulando { animation: ix-some 240ms ease forwards; }
-@keyframes ix-traco { from { stroke-dashoffset: 1.01; } to { stroke-dashoffset: 0; } }
-@keyframes ix-esmaece { to { opacity: 0.14; } }
-@keyframes ix-esmaece-luz { to { opacity: 0.04; } }
-/* a ponta de luz: mesmo trajeto e mesmas curvas dos dois trechos (52,63% = 0,50 s de 0,95 s) */
-@keyframes ix-cometa {
-  0% { transform: translate(var(--x0), var(--y0)); animation-timing-function: cubic-bezier(.45, 0, .75, .6); }
-  52.63% { transform: translate(var(--xc), var(--yc)); animation-timing-function: cubic-bezier(.25, .45, .45, 1); }
-  100% { transform: translate(var(--x1), var(--y1)); }
-}
-@keyframes ix-cabeca { 0% { opacity: 0; } 3% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes ix-pulso { 0% { opacity: 0; transform: scale(0.6); } 6% { opacity: 0.9; } 100% { opacity: 0; transform: scale(3.2); } }
-@keyframes ix-peca-a { from { opacity: 0; transform: translate(-58px, -68px); } to { opacity: 1; transform: none; } }
-@keyframes ix-peca-b { from { opacity: 0; transform: translate(60px, -67px); } to { opacity: 1; transform: none; } }
-@keyframes ix-peca-c { from { opacity: 0; transform: translateY(70px); } to { opacity: 1; transform: none; } }
-@keyframes ix-aparece { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ix-some { to { opacity: 0; } }
-@keyframes ix-digito { from { transform: translateY(112%); } to { transform: none; } }
-@keyframes ix-legenda { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@keyframes ix-recorte { from { clip-path: inset(0 0 0 0 round 0px); } to { clip-path: inset(var(--ix-t, 0px) var(--ix-r, 0px) var(--ix-b, 0px) var(--ix-l, 0px) round var(--ix-raio, 0px)); } }
-@keyframes ix-abre-a { to { transform: rotate(-48deg) translate(-50%, calc(-100% - 76vmax)); } }
-@keyframes ix-abre-b { to { transform: rotate(-48deg) translate(-50%, 76vmax); } }
-@media (max-width: 600px) { .ix__trilha--fio { stroke-width: 7; } }
+/* o X do cabeçalho espera o X da intro pousar; depois do pouso ele fica parado (sem a entrada que gira) */
+html.intro-ativa .logo__parte--x, html.intro-tocando .logo__parte--x { animation: none; opacity: 0; }
+html.ix-pousou .logo__parte--x { animation: none; opacity: 1; }
 
 /* ==========================================================================
    Movimento reduzido e ?fx=0: composição final, parada. Nada de intro, entradas, cena ou vídeo.

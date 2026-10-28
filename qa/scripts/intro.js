@@ -1,5 +1,6 @@
-// Quadros da intro em tempo real (?intro=1). Cada arquivo leva o instante real em ms desde que .ix-tocando entrou.
-// Também confere: a sessão é gravada, a intro some do DOM, o cabeçalho entra, e Escape pula na hora.
+// Quadros da intro em tempo real (?intro=1). Cada arquivo leva o instante real em ms desde que html.intro-tocando entrou.
+// Também confere: a sessão é gravada, a intro some do DOM, o X pousa no cabeçalho, e Escape pula na hora.
+// Quadros exatos, sem depender do relógio: intro-quadros.js.
 // Uso: node intro.js [pasta] [larguras]
 'use strict';
 const path = require('path');
@@ -7,8 +8,8 @@ const { abre, pagina, espera, urlDe } = require('./cdp');
 const RAIZ = path.resolve(__dirname, '..', '..');
 const SAIDA = path.resolve(RAIZ, 'qa', process.argv[2] || 'intro');
 const LARGURAS = (process.argv[3] || '1440,390').split(',').map(Number);
-const ALVOS = [150, 300, 450, 600, 750, 950, 1250, 1550, 1900, 2350, 2900, 3100, 3300, 3550, 3800];
-const MARCA = 'new MutationObserver(function(){var o=document.querySelector(".ix");if(o&&o.classList.contains("ix-tocando")&&!window.__t0)window.__t0=performance.now();}).observe(document,{subtree:true,attributes:true,attributeFilter:["class"],childList:true});';
+const ALVOS = [150, 400, 700, 1000, 1300, 1600, 1850, 2100, 2300, 2500, 2700, 2900, 3300, 3800];
+const MARCA = 'new MutationObserver(function(){var h=document.documentElement;if(h&&h.classList.contains("intro-tocando")&&!window.__t0)window.__t0=performance.now();}).observe(document,{subtree:true,attributes:true,attributeFilter:["class"]});';
 
 (async () => {
   const b = abre();
@@ -26,7 +27,7 @@ const MARCA = 'new MutationObserver(function(){var o=document.querySelector(".ix
         await p.foto(path.join(SAIDA, w + '-' + String(real).padStart(4, '0') + '.jpg'));
       }
       await espera(800);
-      console.log(w, await p.avalia('JSON.stringify({sessao: sessionStorage.getItem("onex-indique-intro"), overlay: !!document.querySelector(".ix"), classes: document.documentElement.className})'));
+      console.log(w, await p.avalia('JSON.stringify({sessao: sessionStorage.getItem("onex-indique-intro"), overlay: !!document.querySelector(".ix"), classes: document.documentElement.className, xDoCabecalho: getComputedStyle(document.querySelector(".logo__parte--x")).opacity})'));
       if (p.erros.length) console.log('  erros:', p.erros);
 
       // pular com Escape no meio

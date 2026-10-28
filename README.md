@@ -11,6 +11,7 @@ Abra `index.html` direto no navegador (funciona em `file://`). Não há dependê
 | `?intro=1` | força a intro (ignora "já vista nesta sessão", `#âncora`, página rolada e aba oculta). Não passa por cima de movimento reduzido nem de `?fx=0`. |
 | `?intro=0` | pula a intro. |
 | `?fx=0` | composição estática: sem intro, sem entradas e sem a visita animada (o hero mostra a fachada em pontos e as paradas viram cartões); tudo no estado final. |
+| `?intro=1&ixqa=1` | verificação: a intro monta e fica parada; `window.__ix.quadro(ms)` desenha aquele instante exato (`qa/scripts/intro-quadros.js`). |
 
 Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do navegador (`sessionStorage`, chave `onex-indique-intro`).
 
@@ -23,7 +24,7 @@ Os parâmetros combinam (`?intro=0&fx=0`). A intro toca uma vez por sessão do n
 | `assets/js/indique.js` | cabeçalho e menu, CTA fixo do celular, efeitos que se repetem, ícones, títulos linha a linha, simulador, formulário |
 | `assets/js/visita.js` | hero: câmera da rolagem e efeito de pontos em WebGL ("Sunset" do editor ASCII do 21st.dev, com a paleta da OneX) |
 | `assets/js/visita-cenas.js` | as fotos da visita em data URI, só para `file://` (gerado por `qa/scripts/gera-cenas-js.js`) |
-| `assets/js/intro.js` | intro "conexão" (só roda com `html.intro-ativa`) |
+| `assets/js/intro.js` | intro "indique \ receba /" em ASCII: grade de caracteres em canvas, X oficial que voa para o cabeçalho (só roda com `html.intro-ativa`) |
 | `assets/img/` | logo oficial (branco e cinza), X oficial, favicon, `og-indique.jpg` (1200 × 630), `x-luz-*.webp` (não usados na página; guardados para peças) |
 | `assets/img/visita/` | `0-fachada` a `5-voip.webp`: fotos ilustrativas geradas no Higgsfield, em tons de cinza (só a luz importa) e em duas versões: a leve (1280 px as largas, 1024 px as quadradas) e a `-hd` (2048 px), que só telas grandes baixam; `6-x.webp`: o X oficial sobre preto; `pontos-*.webp`: as cenas já em pontos, geradas pelo próprio renderizador (`qa/scripts/gera-pontos.js`) para o pôster e a versão estática |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | rastreamento e resumo do programa para assistentes de IA |
@@ -47,25 +48,33 @@ Preto, branco e laranja (paleta da página OnexCloud, sem azul): laranja `#F9681
 
 Laranja `#F9681C` sobre branco dá 3,0:1: não é usado em texto sobre fundo claro.
 
-## Intro "conexão" (3,0 s + 0,6 s de saída)
+## Intro "indique \ receba /" (3,0 s, termina dentro do hero)
 
-Indicar é ligar duas pontas. Duas trilhas de luz laranja entram pelos cantos de cima correndo exatamente pelos eixos do X da OneX e se cruzam no ponto de cruzamento do próprio X; as três peças correm pelos mesmos eixos e travam; a arte oficial assenta; "100%" sobe algarismo por algarismo; a tela se recolhe para a caixa do hero e se abre pela diagonal "/" do X. É diferente da intro do site principal (varredura de terminal, letras mono digitadas, dissolução em ASCII): aqui não há texto digitado, monoespaçada nem caracteres.
+O X da OneX são dois eixos, `\` e `/`, e o programa são dois verbos, *indique* e *receba*. A intro escreve o X numa grade de caracteres com esses dois glifos (o `\` é "indique", o `/` é "receba"). No cruzamento, cada célula vira um `x` (o X feito de x), e uma onda sai dali escrevendo a paisagem do hero em caracteres. O X oficial entra por cima e voa até o X do logo no cabeçalho, enquanto uma varredura "/" derrete os caracteres nos pontos do hero. A intro não cobre e depois revela: ela vira o hero, sem corte, porque a paisagem em caracteres é lida dos próprios canvas do hero (com eles ainda carregando, do pôster; em `file://` só dos canvas).
+
+É diferente da intro do site principal (varredura de terminal, letras digitadas, dissolução em ASCII): nada é digitado, não há chuva de caracteres nem cursor, os glifos são vetoriais (desenhados no código, iguais em qualquer sistema) e escolhidos **pela forma**, não só pela luz. Bordas fortes da paisagem ganham `-` `|` `/` `\` na direção do contorno (o horizonte vira `----`, as paredes do prédio `|`, a porta acesa `XXX`), as áreas claras `+` `x` `X`, as fracas `·` `•` e as estrelas `*`. A célula tem a proporção dos eixos do X (altura = 1,16 × largura), então `\` e `/` correm paralelos às peças. Cores: a mesma rampa dos pontos do hero (preto → `#B5460C` → `#F9681C` → branco).
 
 | Início (s) | Duração | Camada | Técnica |
 |---|---|---|---|
-| 0,10 | 0,50 | entrada: trilha 1 (eixo "\\", você → indicado) e trilha 2 (eixo "/", o retorno) nascem logo fora da tela e aceleram até o cruzamento; as pontas chegam juntas em 0,60 | traço + cometa |
-| 0,60 | 0,45 | saída das trilhas até a borda oposta | traço + cometa |
-| 0,58 | 0,62 | um pulso único no cruzamento | anel |
-| 0,68 / 0,76 / 0,84 | 0,55 | peças A, B e C correm pelos eixos e travam | montar |
-| 1,15 | 0,50 | trilhas esmaecem para 14% (ficam como filetes) | — |
-| 1,35 | 0,30 | X oficial por cima das peças (peças saem 1,60–1,80) | troca para a arte oficial |
-| 1,50 + i·0,07 | 0,55 | "1", "0", "0", "%" sobem das máscaras | letras em sequência |
-| 2,05 | 0,45 | legenda "da 1ª parcela para quem indica a OneX" | — |
-| 2,50–3,00 | — | marca parada | — |
-| 3,00 | 0,35 | a tela se recolhe para o formato da caixa do hero (`clip-path`) e o conteúdo some | saída |
-| 3,15 | 0,45 | as metades se abrem pela "/" do X; cabeçalho (em partes) e hero entram | saída + entrega ao cabeçalho |
+| 0,15 | 0,70 | "\\" se escreve: peça A e perna direita da C, célula a célula pelo eixo; a cabeça nasce branca e esfria para o laranja em 0,26 s | frente pelo eixo (`cubic-bezier(.45,0,.2,1)`) |
+| 0,28 | +28 ms por letra | rótulo `\ INDIQUE` sobre o início do "\\" | cada letra passa por 2–3 glifos antes de assentar |
+| 0,52 | 0,70 | "/" se escreve: peça B e perna esquerda da C | idem |
+| 0,64 | +28 ms | rótulo `RECEBA /` sobre o início do "/" | idem |
+| 0,98 | +22 ms | legenda `100% DA 1ª PARCELA` embaixo do X | idem |
+| 1,20 | 0,75 | onda do cruzamento para fora: cada célula do X vira `X`; a paisagem aparece em caracteres a 55% de exposição (35% atrás do X, num véu elíptico que sai com o voo) | raio com ease-out |
+| 1,60 | 0,28 | X oficial por cima; o X de caracteres esfria por baixo | troca para a arte oficial |
+| 1,95 | +15 ms | os rótulos se desfazem em glifos | — |
+| 1,98 | 0,60 | o X oficial voa até o X do logo (escala exponencial, alvo medido no layout real) | voo |
+| 1,98 | 0,64 | varredura "/" de baixo à esquerda para cima à direita; cada célula leva 0,34 s: acende a 100%, encolhe, vira ponto e abre para o hero | caractere → ponto |
+| 2,33 | — | `--rise-start`: o texto do hero sobe e o nome do logo entra da esquerda | — |
+| 2,58 | — | o X pousa: o X do cabeçalho assume, parado (sem a entrada que gira) | entrega ao cabeçalho |
+| 3,00 | — | tudo aberto: o overlay sai do DOM | — |
 
-Contrato técnico (skill `efeito-de-intro`): decisão no `<head>` antes da primeira pintura; cobertura navy em CSS com failsafe de 4,6 s; `intro.js` com `onerror` que libera a página; dois `requestAnimationFrame` antes de tocar (mais um `setTimeout` de reserva); `finish(true)` no fim natural e `finish(false)` em Escape, Tab, Enter, teclas de rolagem, roda, toque, clique, rolagem, aba oculta e nas travas (sem quadro em 1,5 s; duração + 2 s); sessão gravada logo no começo; não roda com `#âncora`, aba oculta, página já rolada, movimento reduzido ou `?fx=0`. O cabeçalho e o hero entram via `--rise-start`, calculado a partir do instante real em que as animações de entrada nasceram (a primeira pintura pode demorar; sem essa correção o hero ficava invisível depois da intro).
+Ajustes no topo de `assets/js/intro.js`: `R` (o roteiro), `VIDA` (quanto cada célula leva para virar ponto), `FANTASMA` (exposição da paisagem antes da varredura), `ROTULOS` (texto e ritmo), `LOGO_X` (onde fica o X dentro do logo oficial, medido no alfa: x 637–866, y 0–194 de 866 × 250). Tamanhos em `monta()`: célula de 13 px de altura no celular e ~1/62 da altura da tela no resto (13–18 px); X com metade da largura da tela (84% no celular), no máximo 60% da altura e 620 px.
+
+Contrato técnico (skill `efeito-de-intro`): decisão no `<head>` antes da primeira pintura; cobertura em CSS com failsafe de 4,6 s e outro failsafe no próprio overlay (5,4 s, caso o JS morra no meio); `intro.js` com `onerror` que libera a página; dois `requestAnimationFrame` antes de tocar (mais um `setTimeout` de reserva); `finish(true)` no fim natural e `finish(false)` em Escape, Tab, Enter, teclas de rolagem, roda, toque, clique, rolagem, aba oculta, mudança de tamanho e nas travas (sem quadro em 1,5 s; duração + 2 s); sessão gravada logo no começo; não roda com `#âncora`, aba oculta, página já rolada, movimento reduzido ou `?fx=0`. Diferente das intros vetoriais, a coreografia corre num relógio só (`requestAnimationFrame`), porque o desenho é de canvas; cada quadro é uma função pura do tempo, o que permite o gancho `?ixqa=1`. O cabeçalho e o hero entram via `--rise-start`, calculado a partir do instante real em que as animações de entrada nasceram. Classes no `<html>`: `intro-ativa` (decidida no `<head>`, cobertura) → `intro-tocando` (o overlay pinta o próprio fundo e a varredura pode abrir para o hero) → `ix-pousou` (o X do cabeçalho aparece parado; fica para sempre). Se a pessoa pular, o X do cabeçalho faz a entrada normal dele.
+
+Referências: os glifos escolhidos pela forma vêm de [ASCII characters are not pixels](https://alexharri.com/blog/ascii-rendering) (Alex Harri) e do renderizador "shape-aware" da [Codrops](https://tympanus.net/codrops/2026/09/04/beyond-the-luminance-ramp-a-shape-aware-ascii-renderer-in-three-js/); a contenção (só a grade, sem efeitos em volta) do playground de ASCII do [ertdfgcvb](https://korben.info/en/ertdfgcvb-live-coding-ascii.html) (Andreas Gysin); a entrega "tela cheia → objeto do hero" do conceito E do catálogo de aberturas (`skills opnening agentes/references/aberturas.md`). Nenhuma imagem nova foi gerada: a paisagem é a das camadas que já tinham sido feitas no Higgsfield para o hero. A intro anterior ("conexão", trilhas de luz pelos eixos do X) continua em `backup/` e no histórico do git.
 
 ## Hero: visita à OneX (rolagem)
 
@@ -137,8 +146,8 @@ Testado (26/10/2026, Chromium headless) em 1920 × 950, 1440 × 900, 1366 × 657
 
 | Seção | Animação | Gatilho |
 |---|---|---|
-| Intro | trilhas pelos eixos do X, peças que montam o X, "100%" por máscara, saída em diagonal | 1ª visita da sessão |
-| Cabeçalho | X do logo gira e assenta com mola, "one" vem da esquerda, links e botão descem; barra flutuante troca de tom (claro/navy) conforme o que passa por baixo | fim da intro / rolagem |
+| Intro | o X se escreve em `\` e `/` numa grade de caracteres, cruza em `x`, a paisagem do hero aparece em ASCII, o X oficial voa para o cabeçalho e uma varredura derrete os caracteres nos pontos do hero | 1ª visita da sessão |
+| Cabeçalho | com a intro, o X do logo é o X da intro que pousa e "one" vem da esquerda; sem ela (pulada ou já vista), o X gira e assenta com mola; barra flutuante troca de tom (claro/navy) conforme o que passa por baixo | fim da intro / rolagem |
 | Hero (visita) | texto sobe em sequência; a rolagem atravessa fachada → corredor → rack → rede → storage → telefonia → X, em pontos que pulsam | carga / intro; rolagem |
 | Como funciona | nó numerado → título → linha laranja até o próximo nó, sobre um trilho fantasma; o nó 4 (laranja) solta um pulso | 35% na tela |
 | Produtos | cada ícone com movimento próprio: racks entram no gabinete, LEDs do servidor piscam, cursor do terminal pisca, linhas do site se escrevem, VMs saltam dentro do host, seta sobe na nuvem, aba do envelope fecha, ondas do VoIP, seta do backup dá a volta e o arquivo desce | 15% na tela; de novo ao passar o mouse |
@@ -153,7 +162,7 @@ Tudo anima só `transform`, `opacity`, `stroke-dashoffset` e `clip-path` (cores 
 
 ## Decisões
 
-1. **Intro própria e diferente da do site principal**, derivada da ideia de conexão e da geometria real do X (trilhas pelos eixos medidos, cruzamento no ponto de cruzamento do X).
+1. **Intro própria e diferente da do site principal** (28/10/2026, substitui a intro "conexão"): em ASCII, como pedido, mas sem nada digitado nem varredura de terminal. Os dois eixos do X são os dois glifos `\` e `/` e os dois verbos do programa (indique, receba), e a intro termina dentro do hero (os caracteres viram os pontos dele) em vez de cobrir e revelar.
 2. **Hero é uma visita à OneX guiada pela rolagem** (pedido do cliente, com o efeito "Sunset" do 21st.dev como referência): a pessoa entra no data center e cada parada mostra o que dá para indicar, com a comissão. O pulso dos pontos só fica aceso enquanto a pessoa rola ou move o ponteiro e assenta 5 s depois: nada se mexe sozinho por mais de 5 s (WCAG 2.2.2), então não precisa de botão de pausa. "Pular a visita" leva direto ao "Como funciona".
 3. **Botões laranja com texto preto** (6,3:1). Texto branco em `#F9681C` dá 3,0:1 e não passa AA.
 4. **"100% da primeira parcela" em laranja no H1**: é a oferta, não decoração; a condição ("quando a empresa indicada contrata") fica logo abaixo, no hero, no passo 3, no simulador e na primeira resposta do FAQ.
@@ -176,7 +185,8 @@ Harness em `qa/scripts/` (Node 14, sem dependências; Edge headless controlado p
 
 ```bash
 cd qa/scripts
-node intro.js final/intro 1440,390      # quadros da intro + Escape, sessão, #âncora
+node intro.js final/intro-ascii 1440,390   # quadros da intro em tempo real + pouso no cabeçalho, Escape, sessão, #âncora
+node intro-quadros.js final/intro-ascii/quadros 1440x900,390x844,768x1024   # quadros exatos (?ixqa=1)
 node visita.js final/visita 1440,390    # hero: quadros ao longo da rolagem, fluidez e estouro lateral
 node visita-quadros.js tmp/q 1440 0.5 1 0.0625  # quadros exatos de uma troca de cena
 QA_GPU=1 node visita-telas.js final/visita-telas    # o hero em 23 telas (notebooks com escala do Windows, monitores, tablets, celulares em pé e deitados): encaixe do texto + folha de quadros
@@ -194,7 +204,7 @@ node gera-cenas-js.js                   # refaz assets/js/visita-cenas.js (depoi
 
 - **Larguras** 320, 360, 390, 768, 1024, 1280, 1440 e 1920 px: `scrollWidth` igual à largura da tela em todas (sem estouro lateral), sem erro de console nem de rede (`qa/final/log-responsivo.txt`, `qa/final/responsivo/`: hero e página inteira em `?fx=0`).
 - **Seções** capturadas depois da entrada de cada uma em 1440 e 390 px (`qa/final/secoes/`), e em 320 px durante o desenvolvimento.
-- **Intro** em quadros de tempo real, 1440 e 390 px (`qa/final/intro/`, folhas de contato `folha-1440.jpg` e `folha-390.jpg`): trilhas entram, cruzam em ~0,6 s com o pulso, peças travam, X oficial, "100%", saída para a caixa do hero e abertura em diagonal, cabeçalho e hero entrando. Também: sessão gravada, Escape pula na hora, recarga na mesma sessão não repete, `#âncora` não roda. As capturas pedidas por linha de comando (`--virtual-time-budget` 300, 1200 e 2200 ms com `?intro=1`, e `?intro=0`/`?fx=0`) estão em `qa/final/cli/`.
+- **Intro "indique \ receba /"** (28/10/2026, Edge headless, por servidor local e por `file://`): quadros em tempo real em 1440 e 390 px (`qa/final/intro-ascii/`, folhas `folha-1440.jpg` e `folha-390.jpg`) e quadros exatos pelo gancho `?ixqa=1` em 1440 × 900, 390 × 844 e 768 × 1024 (`qa/final/intro-ascii/quadros/`); também conferidos em 1366 × 768, 1920 × 1080, 844 × 390 e 320 × 568. Fim natural: overlay fora do DOM, X do cabeçalho visível e parado no lugar onde o X da intro pousou, h1 visível, sessão gravada. Escape, clique (não atravessa para o botão do hero), roda (não rola) e Escape no meio do voo: página liberada na hora, overlay fora do DOM em ~0,3 s, X do cabeçalho com a entrada normal. Recarga na sessão, `#âncora`, `?fx=0` e movimento reduzido: sem intro. 60 quadros/s em 1440 e 390 px sem GPU (mediana 16,7 ms entre quadros); o desenho de um quadro custa 0,6 ms (mediana) e 1,5 ms (p95) de script em 1440 px. A pasta `qa/final/intro/` guarda os quadros da intro anterior ("conexão", hoje em `backup/`).
 - **Hero "visita"** (26/10/2026, WebGL com células de 5 px, fotos leves e -hd, `qa/final/visita/` e `qa/final/visita-telas/`): 23 telas sem o texto encostar no cabeçalho nem passar da base (notebooks 1280 × 600, 1366 × 657, 1280 × 689 e 720, 1536 × 730, 1440 × 789, 1600 × 789, 1024 × 640; monitores 1920 × 950 e 2560 × 1271; tablets em pé e deitados; celulares de 320 × 568 a 430 × 932 e deitados de 667 × 375 a 915 × 412); objetos inteiros e reconhecíveis em pontos; pontos iguais com a escala de 125% e 150% do Windows (células de 6 e 8 px); rolagem a 60 quadros/s em 1440, 1024, 768, 390 e 320 px; quadro de ~5 ms numa GPU integrada (Intel UHD) em 1440 e 1920 px; sem GPU (só CPU) a qualidade baixa sozinha até o nível 3; página inteira sem estouro lateral de 320 a 2560 px; movimento reduzido e `?fx=0`: sem `visita-on`, sem canvas, cartões; sem erros de console.
 - **Funcional** 25/25 (`qa/final/log-funcional.txt`, capturas em `qa/final/funcional/`): um H1, títulos sem salto, `img` com `alt`/`width`/`height`, botões-ícone com nome, campos com `label` e `autocomplete`, ids únicos; simulador (VoIP Profissional R$ 199,00, Essencial R$ 99,00, Hospedagem R$ 29,90 sem grupo de planos, Colocation e VoIP Enterprise "100% da 1ª parcela", cliques rápidos deixam um valor só); formulário (envio vazio: 8 erros inline e foco no primeiro campo; máscaras; "Abrindo WhatsApp…"; aba nova com `wa.me` → `api.whatsapp.com` e a mensagem completa, inclusive "&"; painel de sucesso; "Indicar outra empresa"); FAQ abre; primeiro Tab no "Pular para o conteúdo"; menu do celular abre, Escape fecha e devolve o foco.
 - **Sem JavaScript** (`qa/final/semjs/`): nenhuma cobertura presa, tudo visível no estado final, cabeçalho navy sólido com os links, aviso `<noscript>` no formulário. O hero vira a versão estática (fachada em pontos e paradas em cartões).
